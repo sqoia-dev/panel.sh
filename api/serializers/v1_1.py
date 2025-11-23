@@ -21,6 +21,7 @@ from . import (
     get_unique_name,
     validate_uri,
 )
+from ..helpers import parse_timezone_aware_datetime
 
 
 class CreateAssetSerializerV1_1(Serializer):
@@ -85,12 +86,16 @@ class CreateAssetSerializerV1_1(Serializer):
         asset['skip_asset_check'] = int(data.get('skip_asset_check', 0))
 
         if data.get('start_date'):
-            asset['start_date'] = data.get('start_date').replace(tzinfo=None)
+            asset['start_date'] = parse_timezone_aware_datetime(
+                data.get('start_date')
+            )
         else:
             asset['start_date'] = ""
 
         if data.get('end_date'):
-            asset['end_date'] = data.get('end_date').replace(tzinfo=None)
+            asset['end_date'] = parse_timezone_aware_datetime(
+                data.get('end_date')
+            )
         else:
             asset['end_date'] = ""
 

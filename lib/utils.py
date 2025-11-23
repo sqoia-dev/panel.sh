@@ -39,6 +39,7 @@ arch = machine()
 
 logger = logging.getLogger(__name__)
 
+
 # This will only work on the Raspberry Pi,
 # so let's wrap it in a try/except so that
 # Travis can run.
@@ -161,6 +162,27 @@ def get_balena_supervisor_version():
         return 'Error getting the Supervisor version'
 
 
+def is_local_environment(environment=None):
+    return (environment or getenv('ENVIRONMENT', None)) in LOCAL_ENVIRONMENTS
+
+
+def wait_for_truthy_redis_key(
+    redis_client, key, attempts, wait_seconds, failure_message, log_level=logging.warning,
+):
+    try:
+        for attempt in Retrying(
+            stop=stop_after_attempt(attempts),
+            wait=wait_fixed(wait_seconds),
+        ):
+            with attempt:
+                if json.loads(redis_client.get(key) or 'false'):
+                    return True
+                raise Exception(failure_message)
+    except RetryError:
+        log_level(failure_message)
+    return False
+
+
 def get_node_ip():
     """
     Returns the node's IP address.
@@ -170,6 +192,8 @@ def get_node_ip():
     within Docker.
     """
 
+    environment = getenv('ENVIRONMENT', None)
+
     if is_balena_app():
         response = get_balena_device_info()
         if response.ok:
@@ -178,49 +202,26 @@ def get_node_ip():
     else:
         r = connect_to_redis()
         max_retries = 60
-        retries = 0
 
-        while True:
-            environment = getenv('ENVIRONMENT', None)
-            if environment in ['development', 'test']:
-                break
-
-            is_ready = r.get('host_agent_ready') or 'false'
-
-            if json.loads(is_ready):
-                break
-
-            if retries >= max_retries:
-                logging.info(
-                    'host_agent_service is not ready after %d retries',
-                    max_retries,
-                )
-                break
-
-            retries += 1
-            sleep(1)
+        if not is_local_environment(environment):
+            wait_for_truthy_redis_key(
+                r,
+                'host_agent_ready',
+                max_retries,
+                1,
+                'host_agent_service is not ready after %d retries' % max_retries,
+                log_level=logging.info,
+            )
 
         r.publish('hostcmd', 'set_ip_addresses')
 
-        try:
-            for attempt in Retrying(
-                stop=stop_after_attempt(20),
-                wait=wait_fixed(1),
-            ):
-                environment = getenv('ENVIRONMENT', None)
-                if environment in ['development', 'test']:
-                    break
-
-                with attempt:
-                    ip_addresses_ready = r.get('ip_addresses_ready') or 'false'
-                    if json.loads(ip_addresses_ready):
-                        break
-                    else:
-                        raise Exception(
-                            'Internet connection is not available.')
-        except RetryError:
-            logging.warning(
-                'Internet connection is not available. '
+        if not is_local_environment(environment):
+            wait_for_truthy_redis_key(
+                r,
+                'ip_addresses_ready',
+                20,
+                1,
+                'Internet connection is not available.',
             )
 
         ip_addresses = r.get('ip_addresses')

@@ -15,6 +15,17 @@ from future.utils import with_metaclass
 LINUX_USER = os.getenv('USER', 'pi')
 
 
+def hash_password(password):
+    """Return a SHA256 hex digest for a given password.
+
+    Accepts either ``str`` or ``bytes`` input and ensures UTF-8 encoding
+    for string values before hashing.
+    """
+    if isinstance(password, str):
+        password = password.encode('utf-8')
+    return hashlib.sha256(password).hexdigest()
+
+
 class Auth(with_metaclass(ABCMeta, object)):
     @abstractmethod
     def authenticate(self):
@@ -117,7 +128,7 @@ class BasicAuth(Auth):
         )
 
     def check_password(self, password):
-        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        hashed_password = hash_password(password)
         return self.settings['password'] == hashed_password
 
     def is_authenticated(self, request):
@@ -155,11 +166,10 @@ class BasicAuth(Auth):
 
     def update_settings(self, request, current_pass_correct):
         new_user = request.POST.get('user', '')
-        new_pass = request.POST.get('password', '').encode('utf-8')
-        new_pass2 = request.POST.get('password2', '').encode('utf-8')
-        new_pass = hashlib.sha256(new_pass).hexdigest() if new_pass else None
-        new_pass2 = hashlib.sha256(new_pass2).hexdigest() if new_pass else None
-        # Handle auth components
+        new_pass = request.POST.get('password', '')
+        new_pass2 = request.POST.get('password2', '')
+        new_pass = hash_password(new_pass) if new_pass else None
+        new_pass2 = hash_password(new_pass2) if new_pass2 else None
         if self.settings['password']:  # if password currently set,
             if new_user != self.settings['user']:  # trying to change user
                 # Should have current password set.

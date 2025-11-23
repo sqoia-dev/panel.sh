@@ -38,4 +38,5 @@ urlpatterns = [
     ),
 ]
 
-# @TODO: Write custom 403 and 404 pages.
+handler403 = 'panelsh_app.error_views.permission_denied_view'
+handler404 = 'panelsh_app.error_views.page_not_found_view'
