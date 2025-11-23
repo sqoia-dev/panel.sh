@@ -204,7 +204,7 @@ def get_node_ip():
         max_retries = 60
 
         if not is_local_environment(environment):
-            wait_for_truthy_redis_key(
+            host_agent_ready = wait_for_truthy_redis_key(
                 r,
                 'host_agent_ready',
                 max_retries,
@@ -212,17 +212,21 @@ def get_node_ip():
                 'host_agent_service is not ready after %d retries' % max_retries,
                 log_level=logging.info,
             )
+            if not host_agent_ready:
+                return 'Unable to retrieve IP.'
 
         r.publish('hostcmd', 'set_ip_addresses')
 
         if not is_local_environment(environment):
-            wait_for_truthy_redis_key(
+            ip_addresses_ready = wait_for_truthy_redis_key(
                 r,
                 'ip_addresses_ready',
                 20,
                 1,
                 'Internet connection is not available.',
             )
+            if not ip_addresses_ready:
+                return 'Unable to retrieve IP.'
 
         ip_addresses = r.get('ip_addresses')
 
