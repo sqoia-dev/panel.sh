@@ -1,6 +1,8 @@
 import json
+from datetime import datetime, timezone as dt_timezone
 
 from dateutil import parser as date_parser
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
@@ -13,6 +15,35 @@ class AssetCreationError(Exception):
         self.errors = errors
 
 
+def parse_timezone_aware_datetime(value):
+    """Return a timezone-aware datetime in UTC.
+
+    Accepts ISO 8601 strings or ``datetime`` instances and ensures the
+    resulting object is aware and normalized to UTC. Empty values are
+    returned unchanged to allow optional fields to propagate naturally.
+    """
+
+    if value in [None, ""]:
+        return value
+
+    if isinstance(value, str):
+        try:
+            parsed_value = date_parser.isoparse(value)
+        except (ValueError, TypeError) as exc:
+            raise ValueError(f"Invalid datetime value: {value}") from exc
+    elif isinstance(value, datetime):
+        parsed_value = value
+    else:
+        raise TypeError(
+            "Datetime values must be ISO-formatted strings or datetime instances."
+        )
+
+    if timezone.is_naive(parsed_value):
+        parsed_value = timezone.make_aware(parsed_value, dt_timezone.utc)
+
+    return parsed_value.astimezone(dt_timezone.utc)
+
+
 def update_asset(asset, data):
     for key, value in list(data.items()):
 
@@ -23,7 +54,7 @@ def update_asset(asset, data):
             continue
 
         if key in ['start_date', 'end_date']:
-            value = date_parser.parse(value).replace(tzinfo=None)
+            value = parse_timezone_aware_datetime(value)
 
         if (
             key in [

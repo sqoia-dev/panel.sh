@@ -5,6 +5,7 @@ from os import path, rename
 from rest_framework.serializers import CharField, Serializer
 
 from api.errors import AssetCreationError
+from api.helpers import parse_timezone_aware_datetime
 from lib.utils import (
     download_video_from_youtube,
     get_video_duration,
@@ -103,8 +104,12 @@ class CreateAssetSerializerMixin:
             else 0
         )
 
-        asset['start_date'] = data.get('start_date').replace(tzinfo=None)
-        asset['end_date'] = data.get('end_date').replace(tzinfo=None)
+        asset['start_date'] = parse_timezone_aware_datetime(
+            data.get('start_date')
+        )
+        asset['end_date'] = parse_timezone_aware_datetime(
+            data.get('end_date')
+        )
 
         if not asset['skip_asset_check'] and url_fails(asset['uri']):
             raise AssetCreationError(
