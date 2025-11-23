@@ -103,14 +103,23 @@ def save_active_assets_ordering(active_asset_ids):
 
 
 def parse_request(request):
-    data = None
-
     # For backward compatibility
-    try:
-        data = json.loads(request.data)
-    except ValueError:
-        data = json.loads(request.data['model'])
-    except TypeError:
-        data = json.loads(request.data['model'])
+    raw_data = request.data
 
-    return data
+    try:
+        return json.loads(raw_data)
+    except (TypeError, ValueError):
+        pass
+
+    if not isinstance(raw_data, dict):
+        raise ValueError(
+            "Request data is not valid JSON and does not include a 'model' field."
+        )
+
+    if 'model' not in raw_data:
+        raise ValueError("Request data is missing the required 'model' field.")
+
+    try:
+        return json.loads(raw_data['model'])
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Request 'model' field is not valid JSON.") from exc
