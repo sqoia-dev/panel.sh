@@ -1,4 +1,3 @@
-import hashlib
 import ipaddress
 import logging
 from datetime import timedelta
@@ -40,7 +39,7 @@ from api.views.mixins import (
     ShutdownViewMixin,
 )
 from lib import device_helper, diagnostics
-from lib.auth import authorized
+from lib.auth import authorized, hash_password
 from lib.github import is_up_to_date
 from lib.utils import (
     connect_to_redis,
@@ -263,10 +262,10 @@ class DeviceSettingsViewV2(APIView):
             return
 
         new_user = data.get('username', '')
-        new_pass = data.get('password', '').encode('utf-8')
-        new_pass2 = data.get('password_2', '').encode('utf-8')
-        new_pass = hashlib.sha256(new_pass).hexdigest() if new_pass else None
-        new_pass2 = hashlib.sha256(new_pass2).hexdigest() if new_pass else None
+        new_pass = data.get('password', '')
+        new_pass2 = data.get('password_2', '')
+        new_pass = hash_password(new_pass) if new_pass else None
+        new_pass2 = hash_password(new_pass2) if new_pass2 else None
 
         if settings['password']:
             if new_user != settings['user']:

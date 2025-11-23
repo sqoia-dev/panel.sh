@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 import configparser
-import hashlib
 import json
 import logging
 from builtins import object, str
@@ -13,7 +12,7 @@ from time import sleep
 
 import zmq
 
-from lib.auth import BasicAuth, NoAuth
+from lib.auth import BasicAuth, NoAuth, hash_password
 from lib.errors import ZmqCollectorTimeoutError
 
 CONFIG_DIR = '.panelsh/'
@@ -100,7 +99,7 @@ class PanelshSettings(UserDict):
                     len(self[field]) != 64
                 ):
                     # Hash the original password.
-                    self[field] = hashlib.sha256(self[field]).hexdigest()
+                    self[field] = hash_password(self[field])
         except configparser.Error as e:
             logging.debug(
                 "Could not parse setting '%s.%s': %s. "
