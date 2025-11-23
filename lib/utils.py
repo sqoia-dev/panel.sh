@@ -87,6 +87,35 @@ def validate_url(string):
     )
 
 
+def check_redis_health(redis_client=None):
+    """Return structured Redis connectivity information."""
+    redis_client = redis_client or connect_to_redis()
+
+    try:
+        redis_client.ping()
+    except Exception as error:  # pragma: no cover - defensive
+        return {
+            'status': 'error',
+            'error': str(error),
+        }
+
+    return {'status': 'ok'}
+
+
+def check_zmq_health():
+    """Return structured ZMQ publish socket status."""
+    try:
+        publisher = ZmqPublisher.get_instance()
+        publisher.send_to_viewer('health_check')
+    except Exception as error:  # pragma: no cover - defensive
+        return {
+            'status': 'error',
+            'error': str(error),
+        }
+
+    return {'status': 'ok'}
+
+
 def get_balena_supervisor_api_response(method, action, **kwargs):
     version = kwargs.pop('version', 'v1')
     timeout = kwargs.pop('timeout', None)

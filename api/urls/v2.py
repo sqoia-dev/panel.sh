@@ -8,6 +8,7 @@ from api.views.v2 import (
     BackupViewV2,
     DeviceSettingsViewV2,
     FileAssetViewV2,
+    HealthViewV2,
     InfoViewV2,
     IntegrationsViewV2,
     PlaylistOrderViewV2,
@@ -60,4 +61,5 @@ def get_url_patterns():
             IntegrationsViewV2.as_view(),
             name='integrations_v2',
         ),
+        path('v2/health', HealthViewV2.as_view(), name='health_v2'),
     ]
