@@ -1,4 +1,4 @@
-${USER} ALL=NOPASSWD: /usr/local/sbin/upgrade_screenly.sh
+${USER} ALL=NOPASSWD: /usr/local/sbin/upgrade_panelsh.sh
 
 #SystemCommands
 ${USER} ALL=NOPASSWD: /sbin/shutdown, /bin/systemctl

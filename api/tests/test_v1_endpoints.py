@@ -12,9 +12,9 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from unittest_parametrize import ParametrizedTestCase, parametrize
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from api.tests.test_common import ASSET_CREATION_DATA
-from settings import settings as anthias_settings
+from settings import settings as panelsh_settings
 
 
 class V1EndpointsTest(TestCase, ParametrizedTestCase):
@@ -25,7 +25,7 @@ class V1EndpointsTest(TestCase, ParametrizedTestCase):
         self.remove_all_asset_files()
 
     def remove_all_asset_files(self):
-        asset_directory_path = Path(anthias_settings['assetdir'])
+        asset_directory_path = Path(panelsh_settings['assetdir'])
         for file in asset_directory_path.iterdir():
             file.unlink()
 
@@ -41,7 +41,7 @@ class V1EndpointsTest(TestCase, ParametrizedTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data['type'], 'url')
-        self.assertEqual(data['url'], 'https://anthias.screenly.io')
+        self.assertEqual(data['url'], 'https://panelsh.panelsh.io')
 
     def test_file_asset(self):
         project_base_path = django_settings.BASE_DIR
@@ -113,26 +113,26 @@ class V1EndpointsTest(TestCase, ParametrizedTestCase):
         self.assertEqual(response.data, 'Asset switched')
 
     @mock.patch(
-        'api.views.mixins.reboot_anthias.apply_async',
+        'api.views.mixins.reboot_panelsh.apply_async',
         side_effect=(lambda: None)
     )
-    def test_reboot(self, reboot_anthias_mock):
+    def test_reboot(self, reboot_panelsh_mock):
         reboot_url = reverse('api:reboot_v1')
         response = self.client.post(reboot_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(reboot_anthias_mock.call_count, 1)
+        self.assertEqual(reboot_panelsh_mock.call_count, 1)
 
     @mock.patch(
-        'api.views.mixins.shutdown_anthias.apply_async',
+        'api.views.mixins.shutdown_panelsh.apply_async',
         side_effect=(lambda: None)
     )
-    def test_shutdown(self, shutdown_anthias_mock):
+    def test_shutdown(self, shutdown_panelsh_mock):
         shutdown_url = reverse('api:shutdown_v1')
         response = self.client.post(shutdown_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(shutdown_anthias_mock.call_count, 1)
+        self.assertEqual(shutdown_panelsh_mock.call_count, 1)
 
     @mock.patch('api.views.v1.ZmqPublisher.send_to_viewer', return_value=None)
     def test_viewer_current_asset(self, send_to_viewer_mock):

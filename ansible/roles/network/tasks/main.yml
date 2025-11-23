@@ -1,12 +1,12 @@
 ---
-- name: Check if screenly-network-manager files exist
+- name: Check if panelsh-network-manager files exist
   ansible.builtin.stat:
-    path: /usr/sbin/screenly_net_mgr.py
-  register: screenly_network_manager
+    path: /usr/sbin/panelsh_net_mgr.py
+  register: panelsh_network_manager
 
-- name: Check if screenly-network-manager is set
+- name: Check if panelsh-network-manager is set
   ansible.builtin.set_fact:
-    screenly_network_manager_exist: "{{ screenly_network_manager.stat.exists }}"
+    panelsh_network_manager_exist: "{{ panelsh_network_manager.stat.exists }}"
 
 - name: Copy network systemd units
   ansible.builtin.template:
@@ -27,37 +27,37 @@
 - name: Disable network manager
   ansible.builtin.systemd:
     state: stopped
-    name: screenly-net-manager.service
+    name: panelsh-net-manager.service
     enabled: false
-  when: screenly_network_manager_exist
+  when: panelsh_network_manager_exist
 
 - name: Disable network watchdog
   ansible.builtin.systemd:
     state: stopped
-    name: screenly-net-watchdog.timer
+    name: panelsh-net-watchdog.timer
     enabled: false
-  when: screenly_network_manager_exist
+  when: panelsh_network_manager_exist
 
 - name: Remove network manager and watchdog
   ansible.builtin.file:
     state: absent
     path: "/usr/sbin/{{ item }}"
   with_items:
-    - screenly_net_mgr.py
-    - screenly_net_watchdog.py
+    - panelsh_net_mgr.py
+    - panelsh_net_watchdog.py
 
 - name: Remove network manager and watchdog unit files
   ansible.builtin.file:
     state: absent
     path: "/etc/systemd/system/{{ item }}"
   with_items:
-    - screenly-net-manager.service
-    - screenly-net-watchdog.service
+    - panelsh-net-manager.service
+    - panelsh-net-watchdog.service
 
 - name: Remove network watchdog timer file
   ansible.builtin.file:
     state: absent
-    path: /etc/systemd/system/screenly-net-watchdog.timer
+    path: /etc/systemd/system/panelsh-net-watchdog.timer
 
 - name: Debug msg for manage network
   ansible.builtin.debug:

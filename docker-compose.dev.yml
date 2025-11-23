@@ -1,7 +1,7 @@
 # vim: ft=yaml.docker-compose
 
 services:
-  anthias-server:
+  panelsh-server:
     build:
       context: .
       dockerfile: docker/Dockerfile.server
@@ -13,28 +13,28 @@ services:
       - ENVIRONMENT=development
     restart: always
     volumes:
-      - anthias-data:/data
+      - panelsh-data:/data
       - ./:/usr/src/app/
 
-  anthias-websocket:
+  panelsh-websocket:
     build:
       context: .
       dockerfile: docker/Dockerfile.websocket
     depends_on:
-      - anthias-server
+      - panelsh-server
     environment:
       - HOME=/data
       - LISTEN=0.0.0.0
     restart: always
     volumes:
-      - anthias-data:/data
+      - panelsh-data:/data
 
-  anthias-celery:
+  panelsh-celery:
     build:
       context: .
       dockerfile: docker/Dockerfile.celery
     depends_on:
-      - anthias-server
+      - panelsh-server
       - redis
     environment:
       - HOME=/data
@@ -42,13 +42,13 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     restart: always
     volumes:
-      - anthias-data:/data
+      - panelsh-data:/data
 
   redis:
     platform: "linux/amd64"
     image: redis:alpine
 
-  anthias-nginx:
+  panelsh-nginx:
     build:
       context: .
       dockerfile: docker/Dockerfile.nginx
@@ -57,12 +57,12 @@ services:
     environment:
       - HOME=/data
     depends_on:
-      - anthias-server
-      - anthias-websocket
+      - panelsh-server
+      - panelsh-websocket
     restart: always
     volumes:
-      - anthias-data:/data:ro
+      - panelsh-data:/data:ro
 
 volumes:
-    anthias-data:
+    panelsh-data:
     redis-data:

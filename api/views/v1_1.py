@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from api.helpers import AssetCreationError, parse_request
 from api.serializers import (
     AssetSerializer,

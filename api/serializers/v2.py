@@ -11,7 +11,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from api.serializers import UpdateAssetSerializer
 from api.serializers.mixins import CreateAssetSerializerMixin
 

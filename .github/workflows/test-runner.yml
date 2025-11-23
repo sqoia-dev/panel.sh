@@ -57,21 +57,21 @@ jobs:
       - name: Run TypeScript tests
         if: inputs.test-type == 'typescript'
         run: |
-          docker compose exec anthias-test \
+          docker compose exec panelsh-test \
             npm install
-          docker compose exec anthias-test \
+          docker compose exec panelsh-test \
             npm run test
 
       - name: Run Python unit tests
         if: inputs.test-type == 'python'
         run: |
-          docker compose exec anthias-test \
+          docker compose exec panelsh-test \
             ./manage.py test --noinput --parallel --exclude-tag=integration
 
       - name: Setup integration test environment
         if: inputs.test-type == 'python'
         run: |
-          docker compose exec anthias-test \
+          docker compose exec panelsh-test \
             bash ./bin/prepare_test_environment.sh -s
 
       - name: Run Python integration tests
@@ -81,7 +81,7 @@ jobs:
           timeout_minutes: 5
           max_attempts: 5
           command: |
-            docker compose exec anthias-test \
+            docker compose exec panelsh-test \
               ./manage.py test --noinput --tag=integration
 
       - name: Upload coverage reports to Codecov

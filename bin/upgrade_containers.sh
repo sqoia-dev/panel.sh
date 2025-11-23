@@ -59,26 +59,26 @@ fi
 if [[ -n $(docker ps | grep srly-ose) ]]; then
     # @TODO: Rename later
     set +e
-    docker container rename srly-ose-wifi-connect anthias-wifi-connect
-    docker container rename srly-ose-server anthias-server
-    docker container rename srly-ose-viewer anthias-viewer
-    docker container rename srly-ose-celery anthias-celery
-    docker container rename srly-ose-websocket anthias-websocket
-    docker container rename srly-ose-nginx anthias-nginx
+    docker container rename srly-ose-wifi-connect panelsh-wifi-connect
+    docker container rename srly-ose-server panelsh-server
+    docker container rename srly-ose-viewer panelsh-viewer
+    docker container rename srly-ose-celery panelsh-celery
+    docker container rename srly-ose-websocket panelsh-websocket
+    docker container rename srly-ose-nginx panelsh-nginx
     set -e
 fi
 
-cat /home/${USER}/screenly/docker-compose.yml.tmpl \
+cat /home/${USER}/panelsh/docker-compose.yml.tmpl \
     | envsubst \
-    > /home/${USER}/screenly/docker-compose.yml
+    > /home/${USER}/panelsh/docker-compose.yml
 
 if [[ "$DEVICE_TYPE" =~ ^(x86|pi5)$ ]]; then
     sed -i '/devices:/ {N; /\n.*\/dev\/vchiq:\/dev\/vchiq/d}' \
-        /home/${USER}/screenly/docker-compose.yml
+        /home/${USER}/panelsh/docker-compose.yml
 fi
 
 sudo -E docker compose \
-    -f /home/${USER}/screenly/docker-compose.yml \
+    -f /home/${USER}/panelsh/docker-compose.yml \
     ${MODE}
 
 if [ -f /var/run/reboot-required ]; then
@@ -86,5 +86,5 @@ if [ -f /var/run/reboot-required ]; then
 fi
 
 sudo -E docker compose \
-    -f /home/${USER}/screenly/docker-compose.yml \
+    -f /home/${USER}/panelsh/docker-compose.yml \
     up -d

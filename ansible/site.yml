@@ -1,4 +1,4 @@
-- name: Install Anthias
+- name: Install Panelsh
   hosts: all
   user: "{{ lookup('env', 'USER') }}"
   become: true
@@ -9,6 +9,6 @@
 
   roles:
     - system
-    - screenly
+    - panelsh
     - network
     - splashscreen

@@ -1,13 +1,13 @@
 # panel.sh: Private White-Label Digital Signage Platform
 
-panel.sh (also referred to as Anthias) is a self-hosted digital signage platform built around Dockerized services for content management, playback, and device orchestration.
+panel.sh (also referred to as Panelsh) is a self-hosted digital signage platform built around Dockerized services for content management, playback, and device orchestration.
 
 ## Architecture at a Glance
-- **NGINX** (`anthias-nginx`) forwards requests to the backend, serves static assets, and proxies WebSocket traffic.
-- **Web app** (`anthias-server`) provides the user-facing UI and Django backend.
-- **Viewer** (`anthias-viewer`) renders scheduled content on connected screens.
-- **Celery** (`anthias-celery`) handles asynchronous jobs such as asset cleanup.
-- **WebSocket** (`anthias-websocket`) bridges real-time communication from NGINX to the backend.
+- **NGINX** (`panelsh-nginx`) forwards requests to the backend, serves static assets, and proxies WebSocket traffic.
+- **Web app** (`panelsh-server`) provides the user-facing UI and Django backend.
+- **Viewer** (`panelsh-viewer`) renders scheduled content on connected screens.
+- **Celery** (`panelsh-celery`) handles asynchronous jobs such as asset cleanup.
+- **WebSocket** (`panelsh-websocket`) bridges real-time communication from NGINX to the backend.
 - **Redis** supplies caching, message brokering, and data storage; SQLite is used for persistent asset metadata.
 
 ## Local Development
@@ -33,17 +33,17 @@ docker compose -f docker-compose.dev.yml down
 ```
 
 ### Web assets
-Webpack runs inside the `anthias-server` container:
+Webpack runs inside the `panelsh-server` container:
 
 ```bash
-docker compose -f docker-compose.dev.yml exec anthias-server npm run dev
+docker compose -f docker-compose.dev.yml exec panelsh-server npm run dev
 ```
 
 Frontend linting/formatting helpers:
 
 ```bash
-docker compose -f docker-compose.dev.yml exec anthias-server npm run lint:check
-docker compose -f docker-compose.dev.yml exec anthias-server npm run format:check
+docker compose -f docker-compose.dev.yml exec panelsh-server npm run lint:check
+docker compose -f docker-compose.dev.yml exec panelsh-server npm run format:check
 ```
 
 ### Django admin access
@@ -51,7 +51,7 @@ Create a superuser inside the dev stack to access `/admin/`:
 
 ```bash
 export COMPOSE_FILE=docker-compose.dev.yml
-docker compose exec anthias-server python manage.py createsuperuser
+docker compose exec panelsh-server python manage.py createsuperuser
 ```
 
 ## Testing
@@ -67,12 +67,12 @@ poetry run python -m tools.image_builder \
 
 docker compose -f docker-compose.test.yml up -d --build
 
-docker compose -f docker-compose.test.yml exec anthias-test bash ./bin/prepare_test_environment.sh -s
+docker compose -f docker-compose.test.yml exec panelsh-test bash ./bin/prepare_test_environment.sh -s
 
 # Unit tests
- docker compose -f docker-compose.test.yml exec anthias-test ./manage.py test --exclude-tag=integration
+ docker compose -f docker-compose.test.yml exec panelsh-test ./manage.py test --exclude-tag=integration
 # Integration tests
- docker compose -f docker-compose.test.yml exec anthias-test ./manage.py test --tag=integration
+ docker compose -f docker-compose.test.yml exec panelsh-test ./manage.py test --tag=integration
 ```
 
 ## Python linting

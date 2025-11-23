@@ -3,7 +3,7 @@
 set -euo pipefail
 
 BUILDER_DOCKERFILE='docker/Dockerfile.dev'
-BUILDER_IMAGE_NAME='anthias-dockerfile-image-builder'
+BUILDER_IMAGE_NAME='panelsh-dockerfile-image-builder'
 BUILDER_CONTAINER_NAME="${BUILDER_IMAGE_NAME}-instance"
 BUILD_TARGET="${BUILD_TARGET:-x86}"
 ENVIRONMENT="${ENVIRONMENT:-development}"

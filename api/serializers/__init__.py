@@ -9,7 +9,7 @@ from rest_framework.serializers import (
     Serializer,
 )
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from lib.utils import validate_url
 
 

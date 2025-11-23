@@ -6,7 +6,7 @@ import json
 
 import requests
 
-BASE_URL = "https://api.github.com/repos/Screenly/Anthias"
+BASE_URL = "https://api.github.com/repos/Panelsh/Panelsh"
 GITHUB_HEADERS = {
     "Accept": "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28"

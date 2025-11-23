@@ -16,13 +16,13 @@ import zmq
 from lib.auth import BasicAuth, NoAuth
 from lib.errors import ZmqCollectorTimeoutError
 
-CONFIG_DIR = '.screenly/'
-CONFIG_FILE = 'screenly.conf'
+CONFIG_DIR = '.panelsh/'
+CONFIG_FILE = 'panelsh.conf'
 DEFAULTS = {
     'main': {
         'analytics_opt_out': False,
-        'assetdir': 'screenly_assets',
-        'database': CONFIG_DIR + 'screenly.db',
+        'assetdir': 'panelsh_assets',
+        'database': CONFIG_DIR + 'panelsh.db',
         'date_format': 'mm/dd/yyyy',
         'use_24_hour_clock': False,
         'use_ssl': False,
@@ -64,8 +64,8 @@ requests_log.setLevel(logging.WARNING)
 logging.debug('Starting viewer')
 
 
-class AnthiasSettings(UserDict):
-    """Anthias' Settings."""
+class PanelshSettings(UserDict):
+    """Panelsh' Settings."""
 
     def __init__(self, *args, **kwargs):
         UserDict.__init__(self, *args, **kwargs)
@@ -119,7 +119,7 @@ class AnthiasSettings(UserDict):
             config.set(section, field, str(self.get(field, default)))
 
     def load(self):
-        """Loads the latest settings from screenly.conf into memory."""
+        """Loads the latest settings from panelsh.conf into memory."""
         logging.debug('Reading config-file...')
         config = configparser.ConfigParser()
         config.read(self.conf_file)
@@ -157,7 +157,7 @@ class AnthiasSettings(UserDict):
             return self.auth_backends[self['auth_backend']]
 
 
-settings = AnthiasSettings()
+settings = PanelshSettings()
 
 
 class ZmqPublisher(object):
@@ -192,7 +192,7 @@ class ZmqConsumer(object):
 
         self.socket = self.context.socket(zmq.PUSH)
         self.socket.setsockopt(zmq.LINGER, 0)
-        self.socket.connect('tcp://anthias-server:5558')
+        self.socket.connect('tcp://panelsh-server:5558')
 
         sleep(1)
 

@@ -8,7 +8,7 @@ from celery_tasks import cleanup
 
 
 class CeleryTasksTestCase(unittest.TestCase):
-    REPO_URL = 'https://github.com/Screenly/screenly-ose'
+    REPO_URL = 'https://github.com/Panelsh/panelsh-ose'
 
     def setUp(self):
         self.image_url = f'{self.REPO_URL}/raw/master/static/img/standby.png'
@@ -24,7 +24,7 @@ class CeleryTasksTestCase(unittest.TestCase):
 class TestCleanup(CeleryTasksTestCase):
     def setUp(self):
         super(TestCleanup, self).setUp()
-        self.assets_path = path.join(getenv('HOME'), 'screenly_assets')
+        self.assets_path = path.join(getenv('HOME'), 'panelsh_assets')
         self.image_path = path.join(self.assets_path, 'image.tmp')
 
     def test_cleanup(self):

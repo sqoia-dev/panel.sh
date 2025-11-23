@@ -93,7 +93,7 @@ export const connectWebSocket = createAsyncThunk(
       }
 
       // Store the WebSocket instance for later use
-      ;(window as ExtendedWindow).anthiasWebSocket = ws
+      ;(window as ExtendedWindow).panelshWebSocket = ws
     })
   },
 )
@@ -101,10 +101,10 @@ export const connectWebSocket = createAsyncThunk(
 export const disconnectWebSocket = createAsyncThunk(
   'websocket/disconnect',
   async () => {
-    const ws = (window as ExtendedWindow).anthiasWebSocket
+    const ws = (window as ExtendedWindow).panelshWebSocket
     if (ws) {
       ws.close(1000) // Normal closure
-      ;(window as ExtendedWindow).anthiasWebSocket = undefined
+      ;(window as ExtendedWindow).panelshWebSocket = undefined
     }
   },
 )

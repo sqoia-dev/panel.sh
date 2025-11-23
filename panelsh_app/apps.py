@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AnthiasAppConfig(AppConfig):
+class PanelshAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'anthias_app'
+    name = 'panelsh_app'

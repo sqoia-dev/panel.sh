@@ -1,7 +1,7 @@
 ## Building Qt and WebView
 
 > [!WARNING]
-> To build this, you need **very** beefy hardware. We are building this on a VM with 32 vCPUs and 128GB RAM. If you're trying to build it locally, you likely need to tweak [MAKE_CORES](https://github.com/Screenly/screenly-ose/blob/master/webview/build_qt5.sh#L12) to something lower, but you would still need a powerful workstation (32GB RAM minimum) to make this build.
+> To build this, you need **very** beefy hardware. We are building this on a VM with 32 vCPUs and 128GB RAM. If you're trying to build it locally, you likely need to tweak [MAKE_CORES](https://github.com/Panelsh/panelsh-ose/blob/master/webview/build_qt5.sh#L12) to something lower, but you would still need a powerful workstation (32GB RAM minimum) to make this build.
 
 ### Building for Raspberry Pi (1-4)
 
@@ -50,7 +50,7 @@ You can learn more about this process in the blog post [Compiling Qt with Docker
 You can append the following environment variables to configure the build process:
 
 * `CLEAN_BUILD`: Set to `1` to ensure a clean build (not including the `ccache` cache).
-* `BUILD_WEBVIEW`:  Set to `0` to disable the build of ScreenlyWebView.
+* `BUILD_WEBVIEW`:  Set to `0` to disable the build of PanelshWebView.
 * `TARGET`: Specify a particular target (such as `pi3` or `pi4`) instead of all existing boards.
 
 ### Building for x86
@@ -96,7 +96,7 @@ The resulting files will be placed in `~/tmp-pi5/build/release`.
 ## Usage
 
 DBus is used for communication.
-Webview registers `screenly.webview` object at `/Screenly` address on the session bus.
+Webview registers `panelsh.webview` object at `/Panelsh` address on the session bus.
 
 Webview provides 2 methods:`loadPage` and `loadImage`.
 
@@ -106,7 +106,7 @@ Example of interaction (python):
 from pydbus import SessionBus
 
 bus = SessionBus()
-browser_bus = bus.get('screenly.webview', '/Screenly')
+browser_bus = bus.get('panelsh.webview', '/Panelsh')
 
 browser_bus.loadPage("www.example.com")
 ```
@@ -150,4 +150,4 @@ If you're using a forked repository, you need to push the tag to the upstream re
 git push upstream WebView-vX.Y.Z
 ```
 
-Pushing this tag will trigger the [build-webview](https://github.com/Screenly/Anthias/actions/workflows/build-webview.yaml) workflow.
+Pushing this tag will trigger the [build-webview](https://github.com/Panelsh/Panelsh/actions/workflows/build-webview.yaml) workflow.

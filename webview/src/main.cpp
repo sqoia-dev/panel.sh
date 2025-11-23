@@ -18,18 +18,18 @@ int main(int argc, char *argv[])
 
     QDBusConnection connection = QDBusConnection::sessionBus();
 
-    if (!connection.registerObject("/Screenly", window,  QDBusConnection::ExportAllSlots))
+    if (!connection.registerObject("/Panelsh", window,  QDBusConnection::ExportAllSlots))
     {
         qWarning() << "Can't register object";
         return 1;
     }
     qDebug() << "WebView connected to D-bus";
 
-    if (!connection.registerService("screenly.webview")) {
+    if (!connection.registerService("panelsh.webview")) {
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
         return 1;
     }
-    qDebug() << "Screenly service start";
+    qDebug() << "Panelsh service start";
 
 
     return app.exec();

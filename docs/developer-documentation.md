@@ -1,28 +1,28 @@
 # Developer documentation
 
-## Understanding the components that make up Anthias
+## Understanding the components that make up Panelsh
 
-Here is a high-level overview of the different components that make Anthias:
+Here is a high-level overview of the different components that make Panelsh:
 
-![Anthias Diagram Overview](/docs/d2/anthias-diagram-overview.svg)
+![Panelsh Diagram Overview](/docs/d2/panelsh-diagram-overview.svg)
 
 These components and their dependencies are mostly installed and handled with Ansible and Docker.
 
-* The **NGINX** component (`anthias-nginx`) forwards requests to the backend and serves static files. It also acts as a reverse proxy.
-* The **viewer** (`anthias-viewer`) is what drives the screen (e.g., shows web page, image or video).
-* The **web app** component (`anthias-server`) &mdash; which consists of the front-end and back-end code &ndash; is what the user interacts with via browser.
-* The **Celery** (`anthias-celery`) component is for aynschronouslt queueing and executing tasks outside the HTTP request-response cycle (e.g., doing assets cleanup).
-* The **WebSocket** (`anthias-websocket`) component is used for forwarding requests from NGINX to the backend.
+* The **NGINX** component (`panelsh-nginx`) forwards requests to the backend and serves static files. It also acts as a reverse proxy.
+* The **viewer** (`panelsh-viewer`) is what drives the screen (e.g., shows web page, image or video).
+* The **web app** component (`panelsh-server`) &mdash; which consists of the front-end and back-end code &ndash; is what the user interacts with via browser.
+* The **Celery** (`panelsh-celery`) component is for aynschronouslt queueing and executing tasks outside the HTTP request-response cycle (e.g., doing assets cleanup).
+* The **WebSocket** (`panelsh-websocket`) component is used for forwarding requests from NGINX to the backend.
 * **Redis** (`redis`) is used as a database, cache and message broker.
 * The **database** component uses **SQLite** for storing the assets information.
 
 ## Dockerized development environment
 
-To simplify development of the server module of Anthias, we've created a Docker container. This is intended to run on your local machine with the Anthias repository mounted as a volume.
+To simplify development of the server module of Panelsh, we've created a Docker container. This is intended to run on your local machine with the Panelsh repository mounted as a volume.
 
 > [!IMPORTANT]
 > * Make sure that you have [installed Docker](https://docs.docker.com/engine/install/) on your machine before proceeding.
-> * Anthias is using Docker's [buildx](https://docs.docker.com/engine/reference/commandline/buildx/) for the image builds. This is used both for cross compilation as well as for local caching. You might need to run `docker buildx create --use` first.
+> * Panelsh is using Docker's [buildx](https://docs.docker.com/engine/reference/commandline/buildx/) for the image builds. This is used both for cross compilation as well as for local caching. You might need to run `docker buildx create --use` first.
 
 Assuming you're in the source code repository, simply run:
 
@@ -33,12 +33,12 @@ $ ./bin/start_development_server.sh
 # ...
 
 [+] Running 6/6
- ✔ Network anthias_default                Created                            0.1s
- ✔ Container anthias-redis-1              Started                            0.2s
- ✔ Container anthias-anthias-server-1     Started                            0.2s
- ✔ Container anthias-anthias-celery-1     Started                            0.3s
- ✔ Container anthias-anthias-websocket-1  Started                            0.4s
- ✔ Container anthias-anthias-nginx-1      Started                            0.5s
+ ✔ Network panelsh_default                Created                            0.1s
+ ✔ Container panelsh-redis-1              Started                            0.2s
+ ✔ Container panelsh-panelsh-server-1     Started                            0.2s
+ ✔ Container panelsh-panelsh-celery-1     Started                            0.3s
+ ✔ Container panelsh-panelsh-websocket-1  Started                            0.4s
+ ✔ Container panelsh-panelsh-nginx-1      Started                            0.5s
 ```
 
 > [!NOTE]
@@ -76,7 +76,7 @@ Create a superuser account:
 
 ```bash
 $ export COMPOSE_FILE=docker-compose.dev.yml
-$ docker compose exec anthias-server \
+$ docker compose exec panelsh-server \
     python manage.py createsuperuser
 # You will be prompted to enter a username, an email address, and a password.
 ```
@@ -106,23 +106,23 @@ Run the unit tests.
 ```bash
 $ docker compose \
     -f docker-compose.test.yml \
-    exec anthias-test bash ./bin/prepare_test_environment.sh -s
+    exec panelsh-test bash ./bin/prepare_test_environment.sh -s
 
 # Integration and non-integration tests should be run separately as the
 # former doesn't run as expected when run together with the latter.
 
 $ docker compose \
     -f docker-compose.test.yml \
-    exec anthias-test ./manage.py test --exclude-tag=integration
+    exec panelsh-test ./manage.py test --exclude-tag=integration
 
 $ docker compose \
     -f docker-compose.test.yml \
-    exec anthias-test ./manage.py test --tag=integration
+    exec panelsh-test ./manage.py test --tag=integration
 ```
 
 ### The QA checklist
 
-We've also provided a [checklist](/docs/qa-checklist.md) that can serve as a guide for testing Anthias manually.
+We've also provided a [checklist](/docs/qa-checklist.md) that can serve as a guide for testing Panelsh manually.
 
 ## Generating CSS and JS files
 
@@ -134,7 +134,7 @@ for details.
 To start [Webpack](https://webpack.js.org/) in development mode, run the following command:
 
 ```bash
-$ docker compose -f docker-compose.dev.yml exec anthias-server \
+$ docker compose -f docker-compose.dev.yml exec panelsh-server \
     npm run dev
 ```
 
@@ -146,18 +146,18 @@ generating the corresponding TypeScript and CSS files.
 To run the linting and formatting checks on the TypeScript code, run the following command:
 
 ```bash
-$ docker compose -f docker-compose.dev.yml exec anthias-server \
+$ docker compose -f docker-compose.dev.yml exec panelsh-server \
     npm run lint:check
-$ docker compose -f docker-compose.dev.yml exec anthias-server \
+$ docker compose -f docker-compose.dev.yml exec panelsh-server \
     npm run format:check
 ```
 
 If you want to fix the linting errors and formatting issues, run the following command:
 
 ```bash
-$ docker compose -f docker-compose.dev.yml exec anthias-server \
+$ docker compose -f docker-compose.dev.yml exec panelsh-server \
     npm run lint:fix
-$ docker compose -f docker-compose.dev.yml exec anthias-server \
+$ docker compose -f docker-compose.dev.yml exec panelsh-server \
     npm run format:fix
 ```
 
@@ -246,32 +246,32 @@ present in a Raspberry Pi with panel.sh installed.
 
 ### `/home/${USER}/panel.sh/`
 
-* All of the files and folders from the Github repo should be cloned into this directory (this replaced the legacy `/home/${USER}/screenly/` path).
+* All of the files and folders from the Github repo should be cloned into this directory (this replaced the legacy `/home/${USER}/panelsh/` path).
 
 ### `/home/${USER}/.panel.sh/`
 
 * `default_assets.yml` &mdash; configuration file which contains the default assets that get added to the assets list if enabled
 * `initialized` &mdash; tells whether access point service (for Wi-Fi connectivity) runs or not
-* `screenly.conf` &mdash; configuration file for web interface settings (legacy name retained for compatibility)
-* `screenly.db` &ndash; database file containing current assets information (legacy name retained for compatibility)
+* `panelsh.conf` &mdash; configuration file for web interface settings (legacy name retained for compatibility)
+* `panelsh.db` &ndash; database file containing current assets information (legacy name retained for compatibility)
 
 
 ### `/etc/systemd/system/`
 
 * `wifi-connect.service` &mdash; starts the Balena `wifi-connect` program to dynamically set the Wi-Fi config on the device via the captive portal
-* `anthias-host-agent.service` &mdash; starts the Python script `host_agent.py`, which subscribes from the Redis component and performs a system call to shutdown or reboot the device when the message is received.
+* `panelsh-host-agent.service` &mdash; starts the Python script `host_agent.py`, which subscribes from the Redis component and performs a system call to shutdown or reboot the device when the message is received.
 
-### `/etc/sudoers.d/screenly_overrides`
+### `/etc/sudoers.d/panelsh_overrides`
 
 * `sudoers` configuration file that allows pi user to execute certain `sudo` commands without being a superuser (i.e., `root`)
 
-### `/usr/share/plymouth/themes/anthias`
+### `/usr/share/plymouth/themes/panelsh`
 
-* `anthias.plymouth` &mdash; Plymouth config file (sets module name, `ImageDir` and `ScriptFile` dir)
-* `anthias.script` &ndash; plymouth script file that loads and scales the splash screen image during the boot process
+* `panelsh.plymouth` &mdash; Plymouth config file (sets module name, `ImageDir` and `ScriptFile` dir)
+* `panelsh.script` &ndash; plymouth script file that loads and scales the splash screen image during the boot process
 * `splashscreen.png` &mdash; the spash screen image that is displayed during the boot process
 
-## Debugging the Anthias WebView
+## Debugging the Panelsh WebView
 
 ```
 export QT_LOGGING_DEBUG=1
@@ -279,7 +279,7 @@ export QT_LOGGING_RULES="*.debug=true"
 export QT_QPA_EGLFS_DEBUG=1
 ```
 
-The Anthias WebView is a custom-built web browser based on the [Qt](https://www.qt.io/) toolkit framework.
+The Panelsh WebView is a custom-built web browser based on the [Qt](https://www.qt.io/) toolkit framework.
 The browser is assembled with a Dockerfile and built by a `webview/build_qt#.sh` script.
 
-For further info on these files and more, visit the following link: [https://github.com/Screenly/Anthias/tree/master/webview](https://github.com/Screenly/Anthias/tree/master/webview)
+For further info on these files and more, visit the following link: [https://github.com/Panelsh/Panelsh/tree/master/webview](https://github.com/Panelsh/Panelsh/tree/master/webview)

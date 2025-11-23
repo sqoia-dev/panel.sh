@@ -5,11 +5,11 @@ alwaysApply: true
 ---
 # General
 
-- Anthias uses Django as the web framework
+- Panelsh uses Django as the web framework
 
 # Project Structure
 
-- [anthias_app](mdc:anthias_app) and [anthias_django](mdc:anthias_django) is where the Django source code lives.
+- [panelsh_app](mdc:panelsh_app) and [panelsh_django](mdc:panelsh_django) is where the Django source code lives.
 - Django HTML templates live in the [templates](mdc:templates) directory.
 - The [static](mdc:static) directory contains static files like HTML, CSS, and JavaScript
   files used for the web interface.
@@ -20,12 +20,12 @@ alwaysApply: true
 - This project uses Docker for containerization.
   - [docker-compose.yml.tmpl](mdc:docker-compose.yml.tmpl) is used for instances installed on Raspberry Pi and x86 devices
     that runs Raspberry Pi OS Lite or Debian.
-  - [docker-compose.dev.yml](mdc:docker-compose.dev.yml) is used for Anthias in development mode (e.g., in a laptop or
+  - [docker-compose.dev.yml](mdc:docker-compose.dev.yml) is used for Panelsh in development mode (e.g., in a laptop or
     personal computer).
   - [docker-compose.balena.yml.tmpl](mdc:docker-compose.balena.yml.tmpl) is used for instances installed on devices that runs
     balenaOS.
-  - The [docker](mdc:docker) directory contains all the necessary Dockerfiles needed by Anthias.
-- The [requirements](mdc:requirements) directory contains all the requirements files required by Anthias
+  - The [docker](mdc:docker) directory contains all the necessary Dockerfiles needed by Panelsh.
+- The [requirements](mdc:requirements) directory contains all the requirements files required by Panelsh
 - [webview](mdc:webview) contains C++ (Qt) source code necessary for the WebView, which is
   a custom-built web browser that makes display of assets (images, videos, or web pages) in
   a connected display (like a TV) possible.
@@ -42,7 +42,7 @@ alwaysApply: true
 - In development, prefix commands with Docker:
 
   ```bash
-  docker compose -f docker-compose.dev.yml exec anthias-server npm install
+  docker compose -f docker-compose.dev.yml exec panelsh-server npm install
   ```
 
 

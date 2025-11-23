@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Panelsh
+Description=Panelsh Splash Screen
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/panelsh
+ScriptFile=/usr/share/plymouth/themes/panelsh/panelsh.script

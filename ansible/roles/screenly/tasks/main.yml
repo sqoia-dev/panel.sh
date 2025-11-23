@@ -7,9 +7,9 @@
     group: "{{ lookup('env', 'USER') }}"
     mode: "0755"
   with_items:
-    - .screenly
+    - .panelsh
     - .config
-    - screenly_assets
+    - panelsh_assets
 
 - name: Create empty .asoundrc
   ansible.builtin.file:
@@ -20,25 +20,25 @@
     owner: "{{ lookup('env', 'USER') }}"
     mode: "0644"
 
-- name: Copy Screenly default assets file
+- name: Copy Panelsh default assets file
   ansible.builtin.copy:
     owner: "{{ lookup('env', 'USER') }}"
     group: "{{ lookup('env', 'USER') }}"
     mode: "0644"
     src: default_assets.yml
-    dest: "/home/{{ lookup('env', 'USER') }}/.screenly/default_assets.yml"
+    dest: "/home/{{ lookup('env', 'USER') }}/.panelsh/default_assets.yml"
     force: true
 
 - name: Remove deprecated parameter "listen"
   ansible.builtin.lineinfile:
     regexp: '^.*listen.*'
     state: absent
-    dest: "/home/{{ lookup('env', 'USER') }}/.screenly/screenly.conf"
+    dest: "/home/{{ lookup('env', 'USER') }}/.panelsh/panelsh.conf"
 
 - name: Install pip dependencies
   ansible.builtin.pip:
     executable: "/home/{{ lookup('env', 'USER') }}/installer_venv/bin/pip"
-    requirements: "/home/{{ lookup('env', 'USER') }}/screenly/requirements/requirements.host.txt"
+    requirements: "/home/{{ lookup('env', 'USER') }}/panelsh/requirements/requirements.host.txt"
     extra_args: "--no-cache-dir --upgrade"
   when: ansible_distribution_major_version | int >= 12
 
@@ -56,21 +56,21 @@
     extra_args: "--no-cache-dir --upgrade"
   when: ansible_distribution_major_version | int <= 11
 
-- name: Remove screenly_utils.sh
+- name: Remove panelsh_utils.sh
   ansible.builtin.file:
     state: absent
-    path: /usr/local/bin/screenly_utils.sh
+    path: /usr/local/bin/panelsh_utils.sh
 
-- name: Cron job to cleanup screenly_assets
+- name: Cron job to cleanup panelsh_assets
   ansible.builtin.cron:
-    name: Cleanup screenly_assets
+    name: Cleanup panelsh_assets
     state: absent
     user: "{{ lookup('env', 'USER') }}"
 
 - name: Download upgrade script from github repository
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/Screenly/Anthias/master/bin/install.sh
-    dest: /usr/local/sbin/upgrade_anthias.sh
+    url: https://raw.githubusercontent.com/Panelsh/Panelsh/master/bin/install.sh
+    dest: /usr/local/sbin/upgrade_panelsh.sh
     mode: "0700"
     owner: root
     group: root
@@ -79,22 +79,22 @@
 - name: Remove the old upgrade script
   ansible.builtin.file:
     state: absent
-    path: /usr/local/sbin/upgrade_screenly.sh
+    path: /usr/local/sbin/upgrade_panelsh.sh
     owner: root
     group: root
 
-- name: Copy screenly_overrides
+- name: Copy panelsh_overrides
   ansible.builtin.copy:
-    src: screenly_overrides
-    dest: /etc/sudoers.d/screenly_overrides
+    src: panelsh_overrides
+    dest: /etc/sudoers.d/panelsh_overrides
     mode: "0440"
     owner: root
     group: root
 
-- name: Remove /usr/local/bin/screenly_usb_assets.sh (deprecated)
+- name: Remove /usr/local/bin/panelsh_usb_assets.sh (deprecated)
   ansible.builtin.file:
     state: absent
-    path: /usr/local/bin/screenly_usb_assets.sh
+    path: /usr/local/bin/panelsh_usb_assets.sh
     owner: root
     group: root
 
@@ -103,14 +103,14 @@
     state: absent
     path: /etc/udev/rules.d/50-autoplay.rules
 
-- name: Copy screenly systemd units
+- name: Copy panelsh systemd units
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "/etc/systemd/system/{{ item }}"
     mode: "0644"
     owner: root
     group: root
-  with_items: "{{ screenly_systemd_units }}"
+  with_items: "{{ panelsh_systemd_units }}"
 
 - name: Remove plymouth-quit-wait.service
   ansible.builtin.file:
@@ -122,12 +122,12 @@
     state: absent
     dest: /lib/systemd/system/plymouth-quit.service
 
-- name: Enable screenly systemd services
+- name: Enable panelsh systemd services
   ansible.builtin.systemd:
     name: "{{ item }}"
     state: started
     enabled: true
-  with_items: "{{ screenly_systemd_units }}"
+  with_items: "{{ panelsh_systemd_units }}"
 
 - name: Check if deprecated systemd services exists
   ansible.builtin.stat:
@@ -143,14 +143,14 @@
     name: "{{ item }}"
     state: stopped
     enabled: false
-  with_items: "{{ deprecated_screenly_systemd_units }}"
+  with_items: "{{ deprecated_panelsh_systemd_units }}"
   when: x_service_exist
 
 - name: Remove deprecated systemd units
   ansible.builtin.file:
     path: "/etc/systemd/system/{{ item }}"
     state: absent
-  with_items: "{{ deprecated_screenly_systemd_units }}"
+  with_items: "{{ deprecated_panelsh_systemd_units }}"
 
 - name: Remove the ngrok binary
   ansible.builtin.file:

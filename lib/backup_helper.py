@@ -6,9 +6,9 @@ import tarfile
 from datetime import datetime
 from os import getenv, makedirs, path, remove
 
-directories = ['.screenly', 'screenly_assets']
-default_archive_name = "anthias-backup"
-static_dir = "screenly/staticfiles"
+directories = ['.panelsh', 'panelsh_assets']
+default_archive_name = "panelsh-backup"
+static_dir = "panelsh/staticfiles"
 
 
 def create_backup(name=default_archive_name):

@@ -73,8 +73,8 @@ class CRUDAssetEndpointsTest(TestCase, ParametrizedTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        self.assertEqual(response.data['name'], 'Anthias')
-        self.assertEqual(response.data['uri'], 'https://anthias.screenly.io')
+        self.assertEqual(response.data['name'], 'Panelsh')
+        self.assertEqual(response.data['uri'], 'https://panelsh.panelsh.io')
         self.assertEqual(response.data['is_enabled'], 0)
         self.assertEqual(response.data['nocache'], 0)
         self.assertEqual(response.data['play_order'], 0)
@@ -93,7 +93,7 @@ class CRUDAssetEndpointsTest(TestCase, ParametrizedTestCase):
 
         test_data = {
             'name': 'Test Video',
-            'uri': '/data/screenly_assets/video.mp4',
+            'uri': '/data/panelsh_assets/video.mp4',
             'start_date': '2019-08-24T14:15:22Z',
             'end_date': '2029-08-24T14:15:22Z',
             'duration': 30,
@@ -153,8 +153,8 @@ class CRUDAssetEndpointsTest(TestCase, ParametrizedTestCase):
             version=version,
         )
 
-        self.assertEqual(updated_asset['name'], 'Anthias')
-        self.assertEqual(updated_asset['uri'], 'https://anthias.screenly.io')
+        self.assertEqual(updated_asset['name'], 'Panelsh')
+        self.assertEqual(updated_asset['uri'], 'https://panelsh.panelsh.io')
         self.assertEqual(updated_asset['duration'], data['duration'])
         self.assertEqual(updated_asset['is_enabled'], data['is_enabled'])
         self.assertEqual(updated_asset['play_order'], data['play_order'])

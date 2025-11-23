@@ -1,9 +1,9 @@
 assets:
-  - name: Screenly Weather Widget
+  - name: Panelsh Weather Widget
     uri: https://weather.srly.io
     mimetype: webpage
 
-  - name: Screenly Clock Widget
+  - name: Panelsh Clock Widget
     uri: https://clock.srly.io
     mimetype: webpage
 

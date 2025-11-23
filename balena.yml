@@ -18,7 +18,7 @@ post-provisioning: >-
 
   * Video feeds (RTSP)
 
-  Thanks to Balena [OpenFleets](https://hub.balena.io/organizations/screenly_ose/fleets), you benefit from having automatic updates. As soon as updates are shipped, they will be deployed to your device.
+  Thanks to Balena [OpenFleets](https://hub.balena.io/organizations/panelsh_ose/fleets), you benefit from having automatic updates. As soon as updates are shipped, they will be deployed to your device.
 
 assets:
   repository:

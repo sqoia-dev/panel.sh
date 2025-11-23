@@ -1,3 +1,3 @@
 """
-Test suite for the Anthias API.
+Test suite for the Panelsh API.
 """

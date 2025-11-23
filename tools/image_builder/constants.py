@@ -10,4 +10,4 @@ SERVICES = (
     'wifi-connect',
     'test',
 )
-GITHUB_REPO_URL = 'https://github.com/Screenly/Anthias'
+GITHUB_REPO_URL = 'https://github.com/Panelsh/Panelsh'

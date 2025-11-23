@@ -14,7 +14,7 @@ QT_VERSION="$QT_MAJOR.$QT_MINOR.$QT_BUG_FIX"
 DEBIAN_VERSION=$(lsb_release -cs)
 MAKE_CORES="$(expr $(nproc) + 2)"
 
-ANTHIAS_RELEASE_URL="https://github.com/Screenly/Anthias/releases"
+ANTHIAS_RELEASE_URL="https://github.com/Panelsh/Panelsh/releases"
 WEBVIEW_VERSION="0.3.5"
 
 mkdir -p "$BUILD_TARGET"
@@ -73,9 +73,9 @@ function build_qt () {
     make -j"$MAKE_CORES"
     make install
 
-    mkdir -p fakeroot/bin fakeroot/share/ScreenlyWebview
-    mv ScreenlyWebview fakeroot/bin/
-    cp -rf /webview/res fakeroot/share/ScreenlyWebview/
+    mkdir -p fakeroot/bin fakeroot/share/PanelshWebview
+    mv PanelshWebview fakeroot/bin/
+    cp -rf /webview/res fakeroot/share/PanelshWebview/
 
     pushd fakeroot
     tar cfz "$BUILD_TARGET/webview-$QT_VERSION-$DEBIAN_VERSION-$1-$GIT_HASH.tar.gz" .

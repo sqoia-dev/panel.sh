@@ -35,7 +35,7 @@ def login(request):
             request.session['auth_username'] = username
             request.session['auth_password'] = password
 
-            return redirect(reverse('anthias_app:react'))
+            return redirect(reverse('panelsh_app:react'))
         else:
             messages.error(request, 'Invalid username or password')
             return template(request, 'login.html', {

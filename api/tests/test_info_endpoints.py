@@ -158,7 +158,7 @@ class InfoEndpointsTest(TestCase):
             'free_space': '20G',
             'display_power': 'on',
             'up_to_date': True,
-            'anthias_version': 'main@a1b2c3d',
+            'panelsh_version': 'main@a1b2c3d',
             'device_model': 'Raspberry Pi 4',
             'uptime': {
                 'days': 1,

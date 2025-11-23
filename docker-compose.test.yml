@@ -1,7 +1,7 @@
 # vim: ft=yaml.docker-compose
 
 services:
-  anthias-test:
+  panelsh-test:
     build:
       context: .
       dockerfile: docker/Dockerfile.test
@@ -14,14 +14,14 @@ services:
     tty: true
     volumes:
       - .:/usr/src/app
-      - anthias-data:/data
+      - panelsh-data:/data
 
-  anthias-celery:
+  panelsh-celery:
     build:
       context: .
       dockerfile: docker/Dockerfile.celery
     depends_on:
-      - anthias-test
+      - panelsh-test
       - redis
     environment:
       - HOME=/data
@@ -29,11 +29,11 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     restart: always
     volumes:
-      - anthias-data:/data
+      - panelsh-data:/data
 
   redis:
     image: redis:alpine
 
 volumes:
-  anthias-data:
+  panelsh-data:
   redis-data:

@@ -8,7 +8,7 @@ from lib.errors import SigalrmError
 from settings import LISTEN, PORT
 from viewer.media_player import MediaPlayerProxy
 
-WATCHDOG_PATH = '/tmp/screenly.watchdog'
+WATCHDOG_PATH = '/tmp/panelsh.watchdog'
 
 
 def sigalrm(signum, frame):

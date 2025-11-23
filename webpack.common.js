@@ -5,7 +5,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
   entry: {
-    "anthias": "./static/src/index.tsx",
+    "panelsh": "./static/src/index.tsx",
   },
   output: {
     path: path.resolve(__dirname, "static/dist"),
@@ -14,7 +14,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "css/anthias.css"
+      filename: "css/panelsh.css"
     }),
     new webpack.ProvidePlugin({
       React: 'react'

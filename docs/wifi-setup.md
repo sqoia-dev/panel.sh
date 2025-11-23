@@ -1,6 +1,6 @@
 # Connecting to Wi-Fi
 
-There are several ways to connect your Anthias instance to Wi-Fi. You can either
+There are several ways to connect your Panelsh instance to Wi-Fi. You can either
 configure the Wi-Fi settings via the captive portal or you can use
 `NetworkManager`'s `nmcli` or `nmtui` commands.
 
@@ -151,13 +151,13 @@ You should see an output similar to the one in the
 
 ## Using the captive portal
 
-Anthias uses balena's [WiFi connect][1] to setup Wi-Fi connectivity in Raspberry Pi devices running
+Panelsh uses balena's [WiFi connect][1] to setup Wi-Fi connectivity in Raspberry Pi devices running
 either [Raspberry Pi OS Lite][2] or [balenaOS][3].
 
 `wifi-connect` will start if there's no Internet connectivity. For instance, if you unplug the Ethernet
 cable from your Pi, a page showing the following information:
 
-- SSID (the Wi-Fi device name), which is "Anthias WiFi Connect" by default
+- SSID (the Wi-Fi device name), which is "Panelsh WiFi Connect" by default
 - Password, which is currently not set
 - Address, which is `192.168.42.1:8000` by default
 
@@ -174,13 +174,13 @@ To get started, do the following steps:
 3.  If the device is not connected to the Internet (for instance, the device is not connected via an
     Ethernet cable).
 4.  Wait for the display to show the Wi-Fi setup page, as discussed earlier.
-5.  Using your phone or your computer, enable Wi-Fi and connect to "Anthias WiFi Connect". By default
+5.  Using your phone or your computer, enable Wi-Fi and connect to "Panelsh WiFi Connect". By default
     no password is required.
 6.  Open a browser on your phone or computer and go to `192.168.42.1:8000`.
 7.  For the SSID, select a Wi-Fi network from the dropdown.
 8.  Enter the Wi-Fi network's password.
 9.  Click Connect.
-10. Your phone will be disconnected from "Anthias WiFi Connect". After some time, you'll notice that
+10. Your phone will be disconnected from "Panelsh WiFi Connect". After some time, you'll notice that
     the display will now show the splash page with an addition IP address.
 11. After a minute, the display will show the assets (if there's any).
 

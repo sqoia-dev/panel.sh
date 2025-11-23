@@ -1,4 +1,4 @@
-name: Deploy Anthias.screenly.io
+name: Deploy Panelsh.panelsh.io
 
 on:
   push:

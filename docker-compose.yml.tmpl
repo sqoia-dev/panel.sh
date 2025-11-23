@@ -1,17 +1,17 @@
 # vim: ft=yaml.docker-compose
 
 services:
-  anthias-wifi-connect:
-    image: screenly/anthias-wifi-connect:${DOCKER_TAG}-${DEVICE_TYPE}
+  panelsh-wifi-connect:
+    image: panelsh/panelsh-wifi-connect:${DOCKER_TAG}-${DEVICE_TYPE}
     build:
       context: .
       dockerfile: docker/Dockerfile.wifi-connect
     depends_on:
-      - anthias-viewer
+      - panelsh-viewer
     environment:
       PORTAL_LISTENING_PORT: 8000
       CHECK_CONN_FREQ: 10
-      PORTAL_SSID: 'Anthias WiFi Connect'
+      PORTAL_SSID: 'Panelsh WiFi Connect'
       DBUS_SYSTEM_BUS_ADDRESS: 'unix:path=/run/dbus/system_bus_socket'
     network_mode: host
     privileged: true
@@ -20,8 +20,8 @@ services:
         source: /run/dbus/system_bus_socket
         target: /run/dbus/system_bus_socket
 
-  anthias-server:
-    image: screenly/anthias-server:${DOCKER_TAG}-${DEVICE_TYPE}
+  panelsh-server:
+    image: panelsh/panelsh-server:${DOCKER_TAG}-${DEVICE_TYPE}
     build:
       context: .
       dockerfile: docker/Dockerfile.server
@@ -38,27 +38,27 @@ services:
     restart: always
     volumes:
       - resin-data:/data
-      - /home/${USER}/.screenly:/data/.screenly
-      - /home/${USER}/screenly_assets:/data/screenly_assets
-      - /home/${USER}/screenly/staticfiles:/data/screenly/staticfiles
+      - /home/${USER}/.panelsh:/data/.panelsh
+      - /home/${USER}/panelsh_assets:/data/panelsh_assets
+      - /home/${USER}/panelsh/staticfiles:/data/panelsh/staticfiles
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
       io.balena.features.supervisor-api: '1'
 
-  anthias-viewer:
-    image: screenly/anthias-viewer:${DOCKER_TAG}-${DEVICE_TYPE}
+  panelsh-viewer:
+    image: panelsh/panelsh-viewer:${DOCKER_TAG}-${DEVICE_TYPE}
     build:
       context: .
       dockerfile: docker/Dockerfile.viewer
     mem_limit: ${VIEWER_MEMORY_LIMIT_KB}k
     depends_on:
-      - anthias-server
+      - panelsh-server
     environment:
       - HOME=/data
       - PORT=80
       - NOREFRESH=1
-      - LISTEN=anthias-nginx
+      - LISTEN=panelsh-nginx
     extra_hosts:
       - "host.docker.internal:host-gateway"
     privileged: true
@@ -67,38 +67,38 @@ services:
     volumes:
       - resin-data:/data
       - /home/${USER}/.asoundrc:/data/.asoundrc
-      - /home/${USER}/.screenly:/data/.screenly
-      - /home/${USER}/screenly_assets:/data/screenly_assets
+      - /home/${USER}/.panelsh:/data/.panelsh
+      - /home/${USER}/panelsh_assets:/data/panelsh_assets
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
       io.balena.features.supervisor-api: '1'
 
-  anthias-websocket:
-    image: screenly/anthias-websocket:${DOCKER_TAG}-${DEVICE_TYPE}
+  panelsh-websocket:
+    image: panelsh/panelsh-websocket:${DOCKER_TAG}-${DEVICE_TYPE}
     build:
       context: .
       dockerfile: docker/Dockerfile.websocket
     depends_on:
-      - anthias-server
+      - panelsh-server
     environment:
       - HOME=/data
       - LISTEN=0.0.0.0
     restart: always
     volumes:
       - resin-data:/data
-      - /home/${USER}/.screenly:/data/.screenly
-      - /home/${USER}/screenly_assets:/data/screenly_assets
+      - /home/${USER}/.panelsh:/data/.panelsh
+      - /home/${USER}/panelsh_assets:/data/panelsh_assets
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-  anthias-celery:
-    image: screenly/anthias-celery:${DOCKER_TAG}-${DEVICE_TYPE}
+  panelsh-celery:
+    image: panelsh/panelsh-celery:${DOCKER_TAG}-${DEVICE_TYPE}
     build:
       context: .
       dockerfile: docker/Dockerfile.celery
     depends_on:
-      - anthias-server
+      - panelsh-server
       - redis
     environment:
       - HOME=/data
@@ -109,15 +109,15 @@ services:
     restart: always
     volumes:
       - resin-data:/data
-      - /home/${USER}/.screenly:/data/.screenly
-      - /home/${USER}/screenly_assets:/data/screenly_assets
+      - /home/${USER}/.panelsh:/data/.panelsh
+      - /home/${USER}/panelsh_assets:/data/panelsh_assets
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
       io.balena.features.supervisor-api: '1'
 
   redis:
-    image: screenly/anthias-redis:${DOCKER_TAG}-${DEVICE_TYPE}
+    image: panelsh/panelsh-redis:${DOCKER_TAG}-${DEVICE_TYPE}
     build:
       context: .
       dockerfile: docker/Dockerfile.redis
@@ -127,8 +127,8 @@ services:
     volumes:
       - redis-data:/var/lib/redis
 
-  anthias-nginx:
-    image: screenly/anthias-nginx:${DOCKER_TAG}-${DEVICE_TYPE}
+  panelsh-nginx:
+    image: panelsh/panelsh-nginx:${DOCKER_TAG}-${DEVICE_TYPE}
     build:
       context: .
       dockerfile: docker/Dockerfile.nginx
@@ -137,18 +137,18 @@ services:
     environment:
       - HOME=/data
     depends_on:
-      - anthias-server
-      - anthias-websocket
+      - panelsh-server
+      - panelsh-websocket
     restart: always
     volumes:
       - resin-data:/data:ro
-      - /home/${USER}/.screenly:/data/.screenly:ro
-      - /home/${USER}/screenly_assets:/data/screenly_assets:ro
-      - /home/${USER}/screenly/staticfiles:/data/screenly/staticfiles:ro
+      - /home/${USER}/.panelsh:/data/.panelsh:ro
+      - /home/${USER}/panelsh_assets:/data/panelsh_assets:ro
+      - /home/${USER}/panelsh/staticfiles:/data/panelsh/staticfiles:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
 volumes:
   resin-data:
   redis-data:
-  screenly-data:
+  panelsh-data:

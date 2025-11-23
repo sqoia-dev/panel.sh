@@ -6,22 +6,22 @@ chmod -f g+rwX /dev/vchiq
 
 # Set permission for sha file
 chown -f viewer /dev/snd/*
-chown -f viewer /data/.screenly/latest_anthias_sha
+chown -f viewer /data/.panelsh/latest_panelsh_sha
 
 # Fixes caching in QTWebEngine
-mkdir -p /data/.local/share/ScreenlyWebview/QtWebEngine \
+mkdir -p /data/.local/share/PanelshWebview/QtWebEngine \
     /data/hotspot \
-    /data/.cache/ScreenlyWebview \
+    /data/.cache/PanelshWebview \
     /data/.pki
 
-chown -Rf viewer /data/.local/share/ScreenlyWebview
-chown -Rf viewer /data/.cache/ScreenlyWebview/
+chown -Rf viewer /data/.local/share/PanelshWebview
+chown -Rf viewer /data/.cache/PanelshWebview/
 chown -Rf viewer /data/.pki
 chown -Rf viewer /data/hotspot
 
 # Temporary workaround for watchdog
-touch /tmp/screenly.watchdog
-chown viewer /tmp/screenly.watchdog
+touch /tmp/panelsh.watchdog
+chown viewer /tmp/panelsh.watchdog
 
 # For whatever reason Raspbian messes up the sudo permissions
 chown -f root:root /usr/bin/sudo

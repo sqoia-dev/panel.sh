@@ -29,7 +29,7 @@ class WebSocketTranslator(object):
             ws.close()
 
 
-class AnthiasServerListener(Thread):
+class PanelshServerListener(Thread):
     def __init__(self, context):
         Thread.__init__(self)
         self.context = context
@@ -38,7 +38,7 @@ class AnthiasServerListener(Thread):
         socket_incoming = self.context.socket(zmq.SUB)
         socket_outgoing = self.context.socket(zmq.PUB)
 
-        socket_incoming.connect('tcp://anthias-server:10001')
+        socket_incoming.connect('tcp://panelsh-server:10001')
         socket_outgoing.bind('inproc://queue')
 
         socket_incoming.setsockopt(zmq.SUBSCRIBE, b'')
@@ -49,7 +49,7 @@ class AnthiasServerListener(Thread):
 
 if __name__ == "__main__":
     context = zmq.Context()
-    listener = AnthiasServerListener(context)
+    listener = PanelshServerListener(context)
     listener.start()
 
     port = int(settings['websocket_port'])

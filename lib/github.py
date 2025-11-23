@@ -69,7 +69,7 @@ def remote_branch_available(branch):
 
     try:
         resp = requests_get(
-            'https://api.github.com/repos/screenly/anthias/branches',
+            'https://api.github.com/repos/panelsh/panelsh/branches',
             headers={
                 'Accept': 'application/vnd.github.loki-preview+json',
             },
@@ -115,7 +115,7 @@ def fetch_remote_hash():
             return None, False
         try:
             resp = requests_get(
-                f'https://api.github.com/repos/screenly/anthias/git/refs/heads/{branch}',  # noqa: E501
+                f'https://api.github.com/repos/panelsh/panelsh/git/refs/heads/{branch}',  # noqa: E501
                 timeout=DEFAULT_REQUESTS_TIMEOUT
             )
             resp.raise_for_status()
@@ -139,7 +139,7 @@ def get_latest_docker_hub_hash(device_type):
     trigger Docker image builds.
     """
 
-    url = 'https://hub.docker.com/v2/namespaces/screenly/repositories/anthias-server/tags'  # noqa: E501
+    url = 'https://hub.docker.com/v2/namespaces/panelsh/repositories/panelsh-server/tags'  # noqa: E501
 
     cached_docker_hub_hash = r.get('latest-docker-hub-hash')
 

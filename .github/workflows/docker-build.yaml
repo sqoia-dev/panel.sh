@@ -157,7 +157,7 @@ jobs:
         continue-on-error: true
         with:
           balena_token: ${{ secrets.BALENA_TOKEN }}
-          fleet: screenly_ose/anthias-${{ matrix.board }}
+          fleet: panelsh_ose/panelsh-${{ matrix.board }}
           source: balena-deploy
 
       - name: Sleep random sleep before retry
@@ -172,5 +172,5 @@ jobs:
         if: ${{ failure() && steps.build.conclusion == 'failure' }}
         with:
           balena_token: ${{ secrets.BALENA_TOKEN }}
-          fleet: screenly_ose/anthias-${{ matrix.board }}
+          fleet: panelsh_ose/panelsh-${{ matrix.board }}
           source: balena-deploy

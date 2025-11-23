@@ -13,7 +13,7 @@ from requests.exceptions import RequestException
 from tenacity import retry
 
 HOME = os.getenv('HOME')
-BASE_API_SCREENLY_URL = 'https://api.screenlyapp.com'
+BASE_API_PANELSH_URL = 'https://api.panelshapp.com'
 ASSETS_ANTHIAS_API = 'http://127.0.0.1/api/v1.1/assets'
 MAX_ASSET_NAME_LENGTH = 40
 PORT = 80
@@ -53,8 +53,8 @@ def set_token(value):
 # Database #
 ############
 
-def get_assets_by_anthias_api():
-    if click.confirm('Do you need authentication to access Anthias API?'):
+def get_assets_by_panelsh_api():
+    if click.confirm('Do you need authentication to access Panelsh API?'):
         login = click.prompt('Login')
         password = click.prompt('Password', hide_input=True)
         auth = HTTPBasicAuth(login, password)
@@ -76,7 +76,7 @@ def get_post_response(endpoint_url, **kwargs):
 
 
 def send_asset(asset):
-    endpoint_url = f'{BASE_API_SCREENLY_URL}/api/v4/assets'
+    endpoint_url = f'{BASE_API_PANELSH_URL}/api/v4/assets'
     asset_uri = asset['uri']
     post_kwargs = {
         'data': {'title': asset['name']},
@@ -90,7 +90,7 @@ def send_asset(asset):
         if asset['mimetype'] in ['image', 'video']:
             if asset_uri.startswith('/data'):
                 asset_uri = os.path.join(
-                    HOME, 'screenly_assets', os.path.basename(asset_uri))
+                    HOME, 'panelsh_assets', os.path.basename(asset_uri))
 
             post_kwargs.update({
                 'files': {
@@ -114,7 +114,7 @@ def send_asset(asset):
 
 
 def check_validate_token(api_key):
-    endpoint_url = f'{BASE_API_SCREENLY_URL}/api/v4/assets'
+    endpoint_url = f'{BASE_API_PANELSH_URL}/api/v4/assets'
     headers = {
         'Authorization': f'Token {api_key}'
     }
@@ -136,7 +136,7 @@ def start_migration():
 
 def assets_migration():
     try:
-        assets = get_assets_by_anthias_api()
+        assets = get_assets_by_panelsh_api()
     except RequestException as error:
         click.secho(f'Error: {error}', fg='red')
         sys.exit(1)

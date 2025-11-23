@@ -7,18 +7,18 @@ set -euo pipefail
 
 BRANCH="master"
 ANSIBLE_PLAYBOOK_ARGS=()
-REPOSITORY="https://github.com/Screenly/Anthias.git"
-ANTHIAS_REPO_DIR="/home/${USER}/screenly"
-GITHUB_API_REPO_URL="https://api.github.com/repos/Screenly/Anthias"
-GITHUB_RELEASES_URL="https://github.com/Screenly/Anthias/releases"
-GITHUB_RAW_URL="https://raw.githubusercontent.com/Screenly/Anthias"
+REPOSITORY="https://github.com/Panelsh/Panelsh.git"
+ANTHIAS_REPO_DIR="/home/${USER}/panelsh"
+GITHUB_API_REPO_URL="https://api.github.com/repos/Panelsh/Panelsh"
+GITHUB_RELEASES_URL="https://github.com/Panelsh/Panelsh/releases"
+GITHUB_RAW_URL="https://raw.githubusercontent.com/Panelsh/Panelsh"
 DOCKER_TAG="latest"
 UPGRADE_SCRIPT_PATH="${ANTHIAS_REPO_DIR}/bin/upgrade_containers.sh"
 ARCHITECTURE=$(uname -m)
 DISTRO_VERSION=$(lsb_release -rs)
 
 INTRO_MESSAGE=(
-    "Anthias requires a dedicated Raspberry Pi and an SD card."
+    "Panelsh requires a dedicated Raspberry Pi and an SD card."
     "You will not be able to use the regular desktop environment once installed."
     ""
     "When prompted for the version, you can choose between the following:"
@@ -28,10 +28,10 @@ INTRO_MESSAGE=(
     "Take note that \`latest\` is a rolling release."
 )
 MANAGE_NETWORK_PROMPT=(
-    "Would you like Anthias to manage the network for you?"
+    "Would you like Panelsh to manage the network for you?"
 )
 VERSION_PROMPT=(
-    "Which version of Anthias would you like to install?"
+    "Which version of Panelsh would you like to install?"
 )
 VERSION_PROMPT_CHOICES=(
     "latest"
@@ -75,7 +75,7 @@ function install_prerequisites() {
 }
 
 function display_banner() {
-    local TITLE="${1:-Anthias Installer}"
+    local TITLE="${1:-Panelsh Installer}"
     local COLOR="212"
 
     gum style \
@@ -148,7 +148,7 @@ function install_packages() {
     fi
 
     if [ "$ARCHITECTURE" != "x86_64" ]; then
-        sudo sed -i 's/apt.screenlyapp.com/archive.raspbian.org/g' \
+        sudo sed -i 's/apt.panelshapp.com/archive.raspbian.org/g' \
             /etc/apt/sources.list
     fi
 
@@ -180,7 +180,7 @@ function install_ansible() {
     fi
 
     # @TODO: Remove me later. Cryptography 38.0.3 won't build at the moment.
-    # See https://github.com/Screenly/Anthias/issues/1654 for details.
+    # See https://github.com/Panelsh/Panelsh/issues/1654 for details.
     sudo ${SUDO_ARGS[@]} pip install cryptography==38.0.1
     sudo ${SUDO_ARGS[@]} pip install "$ANSIBLE_VERSION"
 }
@@ -202,7 +202,7 @@ function set_device_type() {
 }
 
 function run_ansible_playbook() {
-    display_section "Run the Anthias Ansible Playbook"
+    display_section "Run the Panelsh Ansible Playbook"
     set_device_type
 
     sudo -u ${USER} ${SUDO_ARGS[@]} ansible localhost \
@@ -292,10 +292,10 @@ function modify_permissions() {
     fi
 }
 
-function write_anthias_version() {
+function write_panelsh_version() {
     local GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     local GIT_SHORT_HASH=$(git rev-parse --short HEAD)
-    local ANTHIAS_VERSION="Anthias Version: ${GIT_BRANCH}@${GIT_SHORT_HASH}"
+    local ANTHIAS_VERSION="Panelsh Version: ${GIT_BRANCH}@${GIT_SHORT_HASH}"
 
     echo "${ANTHIAS_VERSION}" > ~/version.md
     echo "$(lsb_release -a 2> /dev/null)" >> ~/version.md
@@ -409,7 +409,7 @@ function main() {
     cleanup
     modify_permissions
 
-    write_anthias_version
+    write_panelsh_version
     post_installation
 }
 
