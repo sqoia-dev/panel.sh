@@ -1,5 +1,9 @@
 from __future__ import unicode_literals
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def parse_cpu_info():
     """
@@ -12,11 +16,23 @@ def parse_cpu_info():
 
     with open('/proc/cpuinfo', 'r') as cpuinfo:
         for line in cpuinfo:
+            stripped_line = line.strip()
+            if not stripped_line:
+                continue
+
+            if ':' not in line:
+                logger.warning('Malformed /proc/cpuinfo line missing separator: %s', line.rstrip())
+                continue
+
             try:
-                key = line.split(':')[0].strip()
-                value = line.split(':')[1].strip()
-            except Exception:
-                pass
+                key, value = [part.strip() for part in line.split(':', 1)]
+            except Exception:  # pragma: no cover - defensive logging
+                logger.exception('Failed to parse /proc/cpuinfo line: %s', line.rstrip())
+                continue
+
+            if not key or not value:
+                logger.warning('Malformed /proc/cpuinfo line missing key or value: %s', line.rstrip())
+                continue
 
             if key == 'processor':
                 cpu_info['cpu_count'] += 1
