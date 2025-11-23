@@ -364,6 +364,16 @@ class DeviceSettingsViewV2(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+        filesystem_stats = statvfs("/")
+        total_storage = filesystem_stats.f_frsize * filesystem_stats.f_blocks
+        free_storage = filesystem_stats.f_frsize * filesystem_stats.f_bavail
+        used_storage = total_storage - free_storage
+        percent_used = (
+            round((used_storage / total_storage) * 100, 2)
+            if total_storage
+            else 0
+        )
+
         return Response({
             'player_name': settings['player_name'],
             'audio_output': settings['audio_output'],
@@ -382,6 +392,12 @@ class DeviceSettingsViewV2(APIView):
                 settings['user'] if settings['auth_backend'] == 'auth_basic'
                 else ''
             ),
+            'storage': {
+                'total': total_storage,
+                'used': used_storage,
+                'free': free_storage,
+                'percent_used': percent_used,
+            },
         })
 
     def update_auth_settings(self, data, auth_backend, current_pass_correct):
