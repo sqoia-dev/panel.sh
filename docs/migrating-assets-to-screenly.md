@@ -12,7 +12,7 @@ $ ssh pi@raspberrypi
 Go to the project root directory and create a Python virtual environment, if you haven't created one.
 
 ```bash
-$ cd ~/screenly
+$ cd ~/panel.sh
 $ python -m venv venv/
 ```
 
