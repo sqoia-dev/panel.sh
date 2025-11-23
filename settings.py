@@ -17,9 +17,18 @@ from lib.errors import ZmqCollectorTimeoutError
 
 CONFIG_DIR = '.panelsh/'
 CONFIG_FILE = 'panelsh.conf'
+
+
+def _env_flag(env_var, default=False):
+    env_value = getenv(env_var)
+    if env_value is None:
+        return default
+    return env_value.strip().lower() in ['true', '1', 'yes', 'on']
+
+
 DEFAULTS = {
     'main': {
-        'analytics_opt_out': False,
+        'analytics_opt_out': _env_flag('ANALYTICS_OPT_OUT', False),
         'assetdir': 'panelsh_assets',
         'database': CONFIG_DIR + 'panelsh.db',
         'date_format': 'mm/dd/yyyy',
@@ -85,6 +94,11 @@ class PanelshSettings(UserDict):
             self.load()
 
     def _get(self, config, section, field, default):
+        if field == 'analytics_opt_out':
+            env_override = getenv('ANALYTICS_OPT_OUT')
+            if env_override is not None:
+                self[field] = _env_flag('ANALYTICS_OPT_OUT', default)
+                return
         try:
             if isinstance(default, bool):
                 self[field] = config.getboolean(section, field)
