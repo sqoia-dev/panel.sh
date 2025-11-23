@@ -120,6 +120,10 @@ def get_balena_supervisor_api_response(method, action, **kwargs):
     version = kwargs.pop('version', 'v1')
     timeout = kwargs.pop('timeout', None)
     supervisor_address = os.getenv('BALENA_SUPERVISOR_ADDRESS')
+    supervisor_api_key = os.getenv('BALENA_SUPERVISOR_API_KEY')
+
+    if not supervisor_address or not supervisor_api_key:
+        raise ValueError('Missing Balena supervisor configuration')
     supervisor_url = '{}/{}/{}'.format(
         supervisor_address,
         version,
@@ -127,7 +131,7 @@ def get_balena_supervisor_api_response(method, action, **kwargs):
     )
     request_url = '{}?apikey={}'.format(
         supervisor_url,
-        os.getenv('BALENA_SUPERVISOR_API_KEY'),
+        supervisor_api_key,
     )
 
     log_context = {
@@ -200,6 +204,33 @@ def get_balena_supervisor_version():
         result['error'] = 'Error getting the Supervisor version'
 
     return result
+
+
+def get_balena_supervisor_status(timeout=5):
+    try:
+        response = get_balena_supervisor_api_response(
+            method='get',
+            action='healthy',
+            timeout=timeout,
+        )
+    except ValueError as error:
+        return {'status': 'unavailable', 'error': str(error)}
+    except requests.exceptions.RequestException as error:
+        return {'status': 'error', 'error': str(error)}
+
+    if response.ok:
+        return {'status': 'ok'}
+
+    try:
+        details = response.json()
+    except ValueError:
+        details = response.text
+
+    return {
+        'status': 'unhealthy',
+        'status_code': response.status_code,
+        'error': details,
+    }
 
 
 def is_local_environment(environment=None):

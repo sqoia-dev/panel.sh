@@ -1,4 +1,5 @@
 import hashlib
+import os
 import ipaddress
 import json
 import logging
@@ -7,6 +8,7 @@ from os import getenv, statvfs
 from platform import machine
 
 import psutil
+import requests
 from django.db.models import Q
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
@@ -49,6 +51,8 @@ from lib.utils import (
     check_redis_health,
     check_zmq_health,
     connect_to_redis,
+    get_balena_device_info,
+    get_balena_supervisor_status as fetch_balena_supervisor_status,
     get_node_ip,
     get_node_mac_address,
     is_balena_app,
@@ -587,12 +591,40 @@ class InfoViewV2(InfoViewMixin):
         )
 
     def get_device_model(self):
-        device_model = device_helper.parse_cpu_info().get('model')
+        if is_balena_app():
+            device_model = os.getenv('BALENA_DEVICE_TYPE')
+
+            if device_model:
+                return device_model
+
+            try:
+                device_response = get_balena_device_info()
+            except (ValueError, requests.exceptions.RequestException) as error:
+                logger.warning(
+                    'Unable to retrieve Balena device info',
+                    extra={'error': str(error)},
+                )
+                device_model = None
+            else:
+                if device_response.ok:
+                    try:
+                        device_model = device_response.json().get('device_type')
+                    except ValueError:
+                        logger.warning('Invalid Balena device info response')
+                        device_model = None
+        else:
+            device_model = device_helper.parse_cpu_info().get('model')
 
         if device_model is None and machine() == 'x86_64':
             device_model = 'Generic x86_64 Device'
 
         return device_model
+
+    def get_balena_supervisor_status(self):
+        if not is_balena_app():
+            return None
+
+        return fetch_balena_supervisor_status()
 
     def get_uptime(self):
         system_uptime = timedelta(seconds=diagnostics.get_uptime())
@@ -664,7 +696,10 @@ class InfoViewV2(InfoViewMixin):
                         'type': 'array', 'items': {'type': 'string'}
                     },
                     'mac_address': {'type': 'string'},
-                    'host_user': {'type': 'string'}
+                    'host_user': {'type': 'string'},
+                    'balena_supervisor_status': {
+                        'type': ['object', 'null'],
+                    },
                 }
             }
         }
@@ -691,6 +726,7 @@ class InfoViewV2(InfoViewMixin):
             'ip_addresses': self.get_ip_addresses(),
             'mac_address': get_node_mac_address(),
             'host_user': getenv('HOST_USER'),
+            'balena_supervisor_status': self.get_balena_supervisor_status(),
         })
 
 
