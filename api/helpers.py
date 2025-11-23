@@ -76,11 +76,14 @@ def update_asset(asset, data):
 
 
 def custom_exception_handler(exc, context):
-    exception_handler(exc, context)
+    response = exception_handler(exc, context)
+
+    if response is not None:
+        return response
 
     return Response(
-        {'error': str(exc)},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        {"error": str(exc)},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
 
