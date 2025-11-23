@@ -5,6 +5,8 @@ from os import getenv, statvfs
 from platform import machine
 
 import psutil
+from django.db.models import Q
+from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from hurry.filesize import size
 from rest_framework import status
@@ -56,6 +58,21 @@ logger = logging.getLogger(__name__)
 class AssetListViewV2(APIView):
     serializer_class = AssetSerializerV2
 
+    @staticmethod
+    def _parse_bool_query_param(value, name):
+        if value is None:
+            return None
+
+        normalized = value.strip().lower()
+
+        if normalized in {'1', 'true', 'yes', 'on'}:
+            return True
+
+        if normalized in {'0', 'false', 'no', 'off'}:
+            return False
+
+        raise ValueError(f"Invalid boolean value for '{name}'")
+
     @extend_schema(
         summary='List assets',
         responses={
@@ -65,6 +82,71 @@ class AssetListViewV2(APIView):
     @authorized
     def get(self, request):
         queryset = Asset.objects.all()
+
+        try:
+            is_enabled = self._parse_bool_query_param(
+                request.query_params.get('is_enabled'), 'is_enabled')
+            is_active = self._parse_bool_query_param(
+                request.query_params.get('is_active'), 'is_active')
+        except ValueError as error:
+            return Response({'detail': str(error)},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        search_term = request.query_params.get('search')
+
+        if is_enabled is not None:
+            queryset = queryset.filter(is_enabled=is_enabled)
+
+        if is_active is not None:
+            current_time = timezone.now()
+            active_filter = Q(is_enabled=True,
+                              start_date__lt=current_time,
+                              end_date__gt=current_time)
+
+            if is_active:
+                queryset = queryset.filter(active_filter)
+            else:
+                queryset = queryset.exclude(active_filter)
+
+        if search_term:
+            queryset = queryset.filter(
+                Q(name__icontains=search_term) | Q(uri__icontains=search_term)
+            )
+
+        queryset = queryset.order_by('play_order', 'asset_id')
+
+        page = request.query_params.get('page')
+        page_size = request.query_params.get('page_size')
+
+        if page or page_size:
+            try:
+                page_number = int(page) if page else 1
+                page_limit = int(page_size) if page_size else 50
+            except ValueError:
+                return Response(
+                    {'detail': 'Pagination parameters must be integers.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if page_number < 1 or page_limit < 1:
+                return Response(
+                    {'detail': 'Pagination parameters must be greater than 0.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            start = (page_number - 1) * page_limit
+            end = start + page_limit
+            total_count = queryset.count()
+            paginated_queryset = queryset[start:end]
+            serializer = AssetSerializerV2(paginated_queryset, many=True)
+
+            return Response({
+                'count': total_count,
+                'page': page_number,
+                'page_size': page_limit,
+                'results': serializer.data,
+            })
+
         serializer = AssetSerializerV2(queryset, many=True)
         return Response(serializer.data)
 
