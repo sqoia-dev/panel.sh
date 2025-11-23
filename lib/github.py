@@ -30,8 +30,8 @@ ERROR_BACKOFF_TTL = (60 * 5)
 DOCKER_HUB_HASH_TTL = (10 * 60)
 
 # Google Analytics data
-ANALYTICS_MEASURE_ID = 'G-S3VX8HTPK7'
-ANALYTICS_API_SECRET = 'G8NcBpRIS9qBsOj3ODK8gw'
+ANALYTICS_MEASURE_ID = os.getenv('ANALYTICS_MEASUREMENT_ID')
+ANALYTICS_API_SECRET = os.getenv('ANALYTICS_API_SECRET')
 
 DEFAULT_REQUESTS_TIMEOUT = 1  # in seconds
 
@@ -204,33 +204,36 @@ def is_up_to_date():
 
     if retrieved_update:
         if not settings['analytics_opt_out'] and not is_ci():
-            ga_base_url = 'https://www.google-analytics.com/mp/collect'
-            ga_query_params = f'measurement_id={ANALYTICS_MEASURE_ID}&api_secret={ANALYTICS_API_SECRET}'  # noqa: E501
-            ga_url = f'{ga_base_url}?{ga_query_params}'
-            payload = {
-                'client_id': device_id,
-                'events': [{
-                    'name': 'version',
-                    'params': {
-                        'Branch': str(git_branch),
-                        'Hash': str(git_short_hash),
-                        'NOOBS': os.path.isfile('/boot/os_config.json'),
-                        'Balena': is_balena_app(),
-                        'Docker': is_docker(),
-                        'Pi_Version': parse_cpu_info().get('model', "Unknown")
-                        }
-                }]
-            }
-            headers = {'content-type': 'application/json'}
+            if ANALYTICS_MEASURE_ID and ANALYTICS_API_SECRET:
+                ga_base_url = 'https://www.google-analytics.com/mp/collect'
+                ga_query_params = f'measurement_id={ANALYTICS_MEASURE_ID}&api_secret={ANALYTICS_API_SECRET}'  # noqa: E501
+                ga_url = f'{ga_base_url}?{ga_query_params}'
+                payload = {
+                    'client_id': device_id,
+                    'events': [{
+                        'name': 'version',
+                        'params': {
+                            'Branch': str(git_branch),
+                            'Hash': str(git_short_hash),
+                            'NOOBS': os.path.isfile('/boot/os_config.json'),
+                            'Balena': is_balena_app(),
+                            'Docker': is_docker(),
+                            'Pi_Version': parse_cpu_info().get('model', "Unknown")
+                            }
+                    }]
+                }
+                headers = {'content-type': 'application/json'}
 
-            try:
-                requests_post(
-                    ga_url,
-                    data=json.dumps(payload),
-                    headers=headers
-                )
-            except exceptions.ConnectionError:
-                pass
+                try:
+                    requests_post(
+                        ga_url,
+                        data=json.dumps(payload),
+                        headers=headers
+                    )
+                except exceptions.ConnectionError:
+                    pass
+            else:
+                logging.warning('Analytics disabled due to missing GA configuration')
 
     device_type = os.getenv('DEVICE_TYPE')
     latest_docker_hub_hash = get_latest_docker_hub_hash(device_type)

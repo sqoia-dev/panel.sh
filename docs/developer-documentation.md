@@ -283,3 +283,12 @@ The Panelsh WebView is a custom-built web browser based on the [Qt](https://www.
 The browser is assembled with a Dockerfile and built by a `webview/build_qt#.sh` script.
 
 For further info on these files and more, visit the following link: [https://github.com/Panelsh/Panelsh/tree/master/webview](https://github.com/Panelsh/Panelsh/tree/master/webview)
+
+## Analytics configuration
+
+Version check analytics sent from `lib/github.py` rely on Google Analytics configuration injected at runtime. Provide the following environment variables for any service that should emit analytics:
+
+- `ANALYTICS_MEASUREMENT_ID`: The GA4 measurement ID (e.g., `G-XXXXXXXXXX`).
+- `ANALYTICS_API_SECRET`: The GA4 Measurement Protocol API secret corresponding to the property above.
+
+If either variable is unset, analytics requests are skipped and a warning is logged to aid configuration troubleshooting. Avoid hard-coding these values in source-controlled files.
