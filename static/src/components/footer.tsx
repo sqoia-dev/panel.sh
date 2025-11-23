@@ -8,11 +8,11 @@ export const Footer = () => {
               Want to get more out of your digital signage?{' '}
               <a
                 className="brand"
-                href="https://www.screenly.io/?utm_source=Anthias&utm_medium=root-page&utm_campaign=UI"
+                href="https://panel.sh/?utm_source=panel.sh&utm_medium=root-page&utm_campaign=UI"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <strong>Try Screenly</strong>
+                <strong>Learn about panel.sh</strong>
               </a>
             </span>
           </div>
@@ -27,7 +27,7 @@ export const Footer = () => {
                 API
               </a>
               <a
-                href="https://anthias.screenly.io/#faq?utm_source=Anthias&utm_medium=footer&utm_campaign=UI"
+                href="https://panel.sh/#faq?utm_source=panel.sh&utm_medium=footer&utm_campaign=UI"
                 target="_blank"
                 className="me-4 small"
                 rel="noopener noreferrer"
@@ -35,15 +35,15 @@ export const Footer = () => {
                 FAQ
               </a>
               <a
-                href="https://screenly.io/?utm_source=Anthias&utm_medium=footer&utm_campaign=UI"
+                href="https://panel.sh/?utm_source=panel.sh&utm_medium=footer&utm_campaign=UI"
                 target="_blank"
                 className="me-4 small"
                 rel="noopener noreferrer"
               >
-                Screenly.io
+                panel.sh
               </a>
               <a
-                href="https://forums.screenly.io/"
+                href="https://community.panel.sh/"
                 target="_blank"
                 className="me-4 small"
                 rel="noopener noreferrer"
@@ -57,7 +57,7 @@ export const Footer = () => {
               className="col-3 text-end justify-content-center align-self-center"
             >
               <a
-                href="https://github.com/Screenly/Anthias"
+                href="https://github.com/panelsh/panel.sh"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -65,7 +65,7 @@ export const Footer = () => {
                   alt="GitHub Repo stars"
                   src={(() => {
                     const url = new URL(
-                      'https://img.shields.io/github/stars/Screenly/Anthias',
+                      'https://img.shields.io/github/stars/panelsh/panel.sh',
                     )
                     const params = new URLSearchParams({
                       style: 'for-the-badge',
@@ -85,7 +85,7 @@ export const Footer = () => {
       </div>
       <div className="copy pb-4">
         <div className="container">
-          <div className="text-center p-2">&copy; Screenly, Inc.</div>
+          <div className="text-center p-2">&copy; panel.sh</div>
         </div>
       </div>
     </footer>
