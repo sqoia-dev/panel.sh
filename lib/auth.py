@@ -92,6 +92,52 @@ class NoAuth(Auth):
         return True
 
 
+def update_basic_auth_credentials(settings, new_user, new_pass, new_pass2,
+                                 current_pass_correct):
+    """Update BasicAuth credentials shared across form and API handlers."""
+    hashed_pass = (
+        hashlib.sha256(new_pass.encode('utf-8')).hexdigest() if new_pass else None
+    )
+    hashed_pass2 = (
+        hashlib.sha256(new_pass2.encode('utf-8')).hexdigest()
+        if new_pass2
+        else None
+    )
+
+    if settings['password']:  # if password currently set,
+        if new_user != settings['user']:  # trying to change user
+            # Should have current password set.
+            # Optionally may change password.
+            if current_pass_correct is None:
+                raise ValueError("Must supply current password to change username")
+            if not current_pass_correct:
+                raise ValueError("Incorrect current password.")
+
+            settings['user'] = new_user
+
+        if hashed_pass:
+            if current_pass_correct is None:
+                raise ValueError("Must supply current password to change password")
+            if not current_pass_correct:
+                raise ValueError("Incorrect current password.")
+
+            if hashed_pass2 != hashed_pass:  # changing password
+                raise ValueError("New passwords do not match!")
+
+            settings['password'] = hashed_pass
+
+    else:  # no current password
+        if new_user:  # setting username and password
+            if hashed_pass and hashed_pass != hashed_pass2:
+                raise ValueError("New passwords do not match!")
+            if not hashed_pass:
+                raise ValueError("Must provide password")
+            settings['user'] = new_user
+            settings['password'] = hashed_pass
+        else:
+            raise ValueError("Must provide username")
+
+
 class BasicAuth(Auth):
     display_name = 'Basic'
     name = 'auth_basic'
@@ -155,45 +201,12 @@ class BasicAuth(Auth):
 
     def update_settings(self, request, current_pass_correct):
         new_user = request.POST.get('user', '')
-        new_pass = request.POST.get('password', '').encode('utf-8')
-        new_pass2 = request.POST.get('password2', '').encode('utf-8')
-        new_pass = hashlib.sha256(new_pass).hexdigest() if new_pass else None
-        new_pass2 = hashlib.sha256(new_pass2).hexdigest() if new_pass else None
-        # Handle auth components
-        if self.settings['password']:  # if password currently set,
-            if new_user != self.settings['user']:  # trying to change user
-                # Should have current password set.
-                # Optionally may change password.
-                if current_pass_correct is None:
-                    raise ValueError(
-                        "Must supply current password to change username")
-                if not current_pass_correct:
-                    raise ValueError("Incorrect current password.")
+        new_pass = request.POST.get('password', '')
+        new_pass2 = request.POST.get('password2', '')
 
-                self.settings['user'] = new_user
-
-            if new_pass:
-                if current_pass_correct is None:
-                    raise ValueError(
-                        "Must supply current password to change password")
-                if not current_pass_correct:
-                    raise ValueError("Incorrect current password.")
-
-                if new_pass2 != new_pass:  # changing password
-                    raise ValueError("New passwords do not match!")
-
-                self.settings['password'] = new_pass
-
-        else:  # no current password
-            if new_user:  # setting username and password
-                if new_pass and new_pass != new_pass2:
-                    raise ValueError("New passwords do not match!")
-                if not new_pass:
-                    raise ValueError("Must provide password")
-                self.settings['user'] = new_user
-                self.settings['password'] = new_pass
-            else:
-                raise ValueError("Must provide username")
+        update_basic_auth_credentials(
+            self.settings, new_user, new_pass, new_pass2, current_pass_correct
+        )
 
 
 def authorized(orig):
