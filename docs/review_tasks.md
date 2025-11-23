@@ -1,0 +1,99 @@
+# Code Review Follow-up Tasks
+
+Each task below is formatted as a launch-ready checklist with a clear next action and scope reference.
+
+## Issues
+- [ ] **Harden password hashing during settings load**
+  - Scope: `settings.py` lines 88-104.
+  - Next action: extract shared encoding/ hashing helper used by authentication flows and replace direct `hashlib.sha256` calls.
+- [ ] **Add explicit error responses in `DeviceSettingsViewV2.get`**
+  - Scope: `api/views/v2.py` lines 210-238.
+  - Next action: replace blanket exception handling with logged, typed responses for reload failures.
+- [ ] **Tighten `parse_cpu_info` error handling**
+  - Scope: `lib/device_helper.py` lines 4-26.
+  - Next action: add validation for malformed `/proc/cpuinfo` content and log parsing errors instead of swallowing them.
+- [ ] **Normalize Redis access/retry logic in `get_node_ip`**
+  - Scope: `lib/utils.py` lines 70-131.
+  - Next action: extract retry/backoff helper and centralize environment checks to simplify testing.
+- [ ] **Add structured logging around Balena supervisor calls**
+  - Scope: `lib/utils.py` lines 83-120.
+  - Next action: wrap API calls with log context capturing URLs, timeouts, and failures.
+- [ ] **Validate YAML schema in `add_default_assets`**
+  - Scope: `anthias_app/helpers.py` lines 34-77.
+  - Next action: guard against missing keys before database writes and log validation errors.
+- [ ] **Centralize timezone-aware date handling in `update_asset`**
+  - Scope: `api/helpers.py` lines 16-45.
+  - Next action: create a shared parser/validator to ensure consistent timezone-aware dates across serializers.
+- [ ] **Unify authentication update flows**
+  - Scope: `api/views/v2.py` lines 240-332; `lib/auth.py` lines 156-195.
+  - Next action: extract shared password-change utility used by REST and form handlers to avoid divergence.
+- [ ] **Clarify analytics configuration/secret handling**
+  - Scope: `lib/github.py` lines 21-37.
+  - Next action: move GA secrets to environment variables and document expected configuration.
+- [ ] **Implement custom 403/404 views**
+  - Scope: `anthias_django/urls.py` lines 18-38.
+  - Next action: create and wire UX-friendly 403/404 views with logging for missing pages.
+
+## Bugs
+- [ ] **Encode passwords before hashing in `AnthiasSettings._get`**
+  - Scope: `settings.py` lines 88-104.
+  - Next action: encode values prior to hashing to prevent Python 3 `TypeError` on legacy configs.
+- [ ] **Remove plaintext passwords from login session storage**
+  - Scope: `anthias_app/views.py` lines 27-47.
+  - Next action: store only a hash or token in session to avoid credential leakage.
+- [ ] **Handle missing assets gracefully in `AssetViewV2`**
+  - Scope: `api/views/v2.py` lines 105-142.
+  - Next action: handle `DoesNotExist` and return 404 instead of 500 for missing assets.
+- [ ] **Restore DRF default responses in custom exception handler**
+  - Scope: `api/helpers.py` lines 47-53.
+  - Next action: call DRF default handler and only override when necessary to avoid masking validation errors.
+- [ ] **Ensure `get_latest_docker_hub_hash` fetches on empty cache**
+  - Scope: `lib/github.py` lines 136-177.
+  - Next action: trigger tag fetch when cache is empty instead of returning `None` on cold start.
+- [ ] **Improve `parse_request` validation**
+  - Scope: `api/helpers.py` lines 74-85.
+  - Next action: fail fast with clear errors when `request.data` lacks `model` instead of propagating exceptions.
+- [ ] **Surface server errors in `DeviceSettingsViewV2.patch`**
+  - Scope: `api/views/v2.py` lines 270-332.
+  - Next action: replace blanket 400 response with logged, typed errors to reveal server-side failures.
+- [ ] **Validate username/password pairing in `update_auth_settings`**
+  - Scope: `api/views/v2.py` lines 240-292.
+  - Next action: enforce non-blank usernames when passwords are set to keep credentials consistent.
+- [ ] **Publish Redis IP data only after readiness checks**
+  - Scope: `lib/utils.py` lines 98-131.
+  - Next action: ensure readiness checks complete before publishing to avoid stale IP values.
+- [ ] **Align `get_balena_supervisor_version` return types**
+  - Scope: `lib/utils.py` lines 71-82.
+  - Next action: normalize return types (e.g., dict or structured object) instead of mixing dict-derived value and string.
+
+## Features to Add
+- [ ] **Expose hostname/IP metadata via REST**
+  - Scope: `anthias_app/views.py` lines 50-64; `lib/utils.py` lines 98-131.
+  - Next action: create endpoint returning hostname/IP used by the splash page instead of deriving it in templates.
+- [ ] **Add login rate limiting or captcha**
+  - Scope: `anthias_app/views.py` lines 27-47.
+  - Next action: integrate rate limiting or captcha middleware on login endpoint to mitigate brute-force attempts.
+- [ ] **Add pagination/filtering to `AssetListViewV2`**
+  - Scope: `api/views/v2.py` lines 56-103.
+  - Next action: implement pagination and filter parameters to support large playlists.
+- [ ] **Support ETag/If-None-Match on asset retrieval**
+  - Scope: `api/views/v2.py` lines 105-142.
+  - Next action: add conditional request handling to reduce bandwidth for frequent polling clients.
+- [ ] **Async tasks for adding/removing default assets**
+  - Scope: `api/views/v2.py` lines 300-323; `anthias_app/helpers.py` lines 34-77.
+  - Next action: move default-asset operations into async jobs to avoid blocking API responses.
+- [ ] **Report storage utilization via settings API**
+  - Scope: `api/views/v2.py` lines 1-28, 334-370.
+  - Next action: use existing `statvfs` import to surface storage metrics in device settings responses.
+- [ ] **Add structured health endpoint**
+  - Scope: `settings.py` lines 136-164; `lib/utils.py` lines 70-131.
+  - Next action: expose health check reporting Redis/ZMQ connectivity for monitoring systems.
+- [ ] **Enrich `InfoViewV2` diagnostics**
+  - Scope: `api/views/v2.py` lines 372-410; `lib/utils.py` lines 83-120.
+  - Next action: include Balena supervisor status and device model in the info response.
+- [ ] **Add API-driven analytics opt-out**
+  - Scope: `settings.py` lines 16-49; `lib/github.py` lines 32-37.
+  - Next action: provide API configuration for analytics opt-out instead of config-file-only control.
+- [ ] **Rotate generated device IDs securely**
+  - Scope: `lib/github.py` lines 186-203.
+  - Next action: implement scheduled rotation with secure persistence instead of Redis volatile storage.
