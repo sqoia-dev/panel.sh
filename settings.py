@@ -99,7 +99,10 @@ class PanelshSettings(UserDict):
                     len(self[field]) != 64
                 ):
                     # Hash the original password.
-                    self[field] = hash_password(self[field])
+                    password = self[field]
+                    if isinstance(password, str):
+                        password = password.encode('utf-8')
+                    self[field] = hash_password(password)
         except configparser.Error as e:
             logging.debug(
                 "Could not parse setting '%s.%s': %s. "
