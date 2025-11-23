@@ -5,6 +5,7 @@ from rest_framework.serializers import (
     CharField,
     ChoiceField,
     DateTimeField,
+    FloatField,
     IntegerField,
     ModelSerializer,
     Serializer,
@@ -73,6 +74,13 @@ class UpdateAssetSerializerV2(UpdateAssetSerializer):
     duration = IntegerField()
 
 
+class StorageMetricsSerializer(Serializer):
+    total = IntegerField()
+    used = IntegerField()
+    free = IntegerField()
+    percent_used = FloatField()
+
+
 class DeviceSettingsSerializerV2(Serializer):
     player_name = CharField()
     audio_output = CharField()
@@ -86,6 +94,7 @@ class DeviceSettingsSerializerV2(Serializer):
     use_24_hour_clock = BooleanField()
     debug_logging = BooleanField()
     username = CharField()
+    storage = StorageMetricsSerializer()
 
 
 class UpdateDeviceSettingsSerializerV2(Serializer):
