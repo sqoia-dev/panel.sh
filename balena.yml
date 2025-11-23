@@ -1,4 +1,4 @@
-name: "Anthias"
+name: "panel.sh"
 type: "sw.application"
 description: >-
   The world's most popular open source digital signage project
@@ -6,9 +6,9 @@ post-provisioning: >-
 
   ## Introduction
 
-  Anthias (formerly known as Screenly OSE) is free digital signage software that is backed by our community and maintained by Screenly, Inc.
+  panel.sh is community-backed digital signage software maintained by the panel.sh team.
 
-  With Anthias, a monitor/TV and a Raspberry Pi, you can create a remotely managed screen that can display:
+  With panel.sh, a monitor/TV and a Raspberry Pi, you can create a remotely managed screen that can display:
 
   * Images
 
@@ -24,8 +24,8 @@ assets:
   repository:
     type: "blob.asset"
     data:
-      url: "https://github.com/Screenly/Anthias/"
+      url: "https://github.com/panelsh/panel.sh/"
   logo:
     type: "blob.asset"
     data:
-      url: "https://raw.githubusercontent.com/Screenly/Anthias/master/static/img/square-dark.svg"
+      url: "https://raw.githubusercontent.com/panelsh/panel.sh/master/static/img/square-dark.svg"

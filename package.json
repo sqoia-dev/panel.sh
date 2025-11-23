@@ -1,5 +1,5 @@
 {
-  "name": "anthias",
+  "name": "panel-sh",
   "version": "1.0.0",
   "scripts": {
     "dev": "webpack --watch --config webpack.dev.js",

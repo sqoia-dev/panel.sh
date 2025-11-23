@@ -5,11 +5,11 @@
 Make sure that you have [Git](https://git-scm.com/) installed on your machine.
 You can install the [GitHub CLI](https://cli.github.com/) to make it easier to fork and clone repositories and checking out between pull requests.
 
-To get started, fork the [Screenly/Anthias](https://github.com/Screenly/Anthias/) repository and clone your fork.
+To get started, fork the [panelsh/panel.sh](https://github.com/panelsh/panel.sh/) repository and clone your fork.
 
 ```bash
-git clone https://github.com/your-username/Anthias.git
-cd Anthias
+git clone https://github.com/your-username/panel.sh.git
+cd panel.sh
 ```
 
 ## :lady_beetle: Creating Issues
@@ -26,14 +26,14 @@ types:
 ### Creating Pull Requests
 
 - All pull requests should be made against the `master` branch of the
-  [Screenly/Anthias](https://github.com/Screenly/Anthias/) repository.
-- Associate the pull request with the [Anthias project](https://github.com/orgs/Screenly/projects/2).
+  [panelsh/panel.sh](https://github.com/panelsh/panel.sh/) repository.
+- Associate the pull request with the panel.sh project board.
 - Add a label to the pull request that describes the changes you made.
   - Add a `bug` label if you are fixing a bug.
   - Add an `enhancement` label if you are adding a new feature or modifying
     existing functionality.
   - Add a `documentation` label if you are updating the documentation.
-  - Add a `chore` label if you are doing tasks that don't alter Anthias'
+  - Add a `chore` label if you are doing tasks that don't alter panel.sh's
     functionality.
   - Add a `webview` label if you are making changes to the [WebView](/webview/README.md).
   - Add a `tests` label if you are adding or modifying unit or integration tests.

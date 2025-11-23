@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import {
-  AnthiasVersionValueProps,
+  PanelVersionValueProps,
   SkeletonProps,
   MemoryInfo,
   UptimeInfo,
 } from '@/types'
 
-const ANTHIAS_REPO_URL = 'https://github.com/Screenly/Anthias'
+const PANEL_REPO_URL = 'https://github.com/panelsh/panel.sh'
 
-const AnthiasVersionValue = ({ version }: AnthiasVersionValueProps) => {
+const PanelVersionValue = ({ version }: PanelVersionValueProps) => {
   const [commitLink, setCommitLink] = useState('')
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const AnthiasVersionValue = ({ version }: AnthiasVersionValueProps) => {
     const [gitBranch, gitCommit] = version ? version.split('@') : ['', '']
 
     if (gitBranch === 'master') {
-      setCommitLink(`${ANTHIAS_REPO_URL}/commit/${gitCommit}`)
+      setCommitLink(`${PANEL_REPO_URL}/commit/${gitCommit}`)
     }
   })
 
@@ -59,7 +59,7 @@ export const SystemInfo = () => {
   })
   const [displayPower, setDisplayPower] = useState<string | null>(null)
   const [deviceModel, setDeviceModel] = useState('')
-  const [anthiasVersion, setAnthiasVersion] = useState('')
+  const [panelVersion, setPanelVersion] = useState('')
   const [macAddress, setMacAddress] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [playerName, setPlayerName] = useState('')
@@ -92,7 +92,7 @@ export const SystemInfo = () => {
       setUptime(systemInfo.uptime)
       setDisplayPower(systemInfo.display_power)
       setDeviceModel(systemInfo.device_model)
-      setAnthiasVersion(systemInfo.anthias_version)
+      setPanelVersion(systemInfo.anthias_version)
       setMacAddress(systemInfo.mac_address)
       setPlayerName(settingsData.player_name ?? '')
     } catch {
@@ -197,10 +197,10 @@ export const SystemInfo = () => {
                 </td>
               </tr>
               <tr>
-                <th scope="row">Anthias Version</th>
+                <th scope="row">panel.sh Version</th>
                 <td>
                   <Skeleton isLoading={isLoading}>
-                    <AnthiasVersionValue version={anthiasVersion} />
+                    <PanelVersionValue version={panelVersion} />
                   </Skeleton>
                 </td>
               </tr>
