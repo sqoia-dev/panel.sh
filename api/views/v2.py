@@ -270,14 +270,18 @@ class DeviceSettingsViewV2(APIView):
         if auth_backend != 'auth_basic':
             return
 
-        new_user = data.get('username', '')
+        new_user = data.get('username')
         new_pass = data.get('password', '')
         new_pass2 = data.get('password_2', '')
         new_pass = hash_password(new_pass) if new_pass else None
         new_pass2 = hash_password(new_pass2) if new_pass2 else None
 
+        target_user = new_user if new_user is not None else settings.get('user', '')
+        if (new_pass or settings['password']) and not target_user:
+            raise ValueError("Must provide username when password is set")
+
         if settings['password']:
-            if new_user != settings['user']:
+            if new_user is not None and new_user != settings['user']:
                 if current_pass_correct is None:
                     raise ValueError(
                         "Must supply current password to change username"
