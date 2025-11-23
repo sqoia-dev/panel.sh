@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from lib.auth import authorized
+from lib.auth import authorized, hash_password
 from lib.utils import (
     connect_to_redis,
     get_node_ip,
@@ -31,9 +31,9 @@ def login(request):
         password = request.POST.get('password')
 
         if settings.auth._check(username, password):
-            # Store credentials in session
+            # Store only hashed credentials in session
             request.session['auth_username'] = username
-            request.session['auth_password'] = password
+            request.session['auth_password_hash'] = hash_password(password)
 
             return redirect(reverse('panelsh_app:react'))
         else:

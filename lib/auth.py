@@ -195,9 +195,12 @@ class BasicAuth(Auth):
 
         # Then check session for form-based login
         username = request.session.get('auth_username')
-        password = request.session.get('auth_password')
-        if username and password:
-            return self._check(username, password)
+        password_hash = request.session.get('auth_password_hash')
+        if username and password_hash:
+            return (
+                self.settings['user'] == username and
+                self.settings['password'] == password_hash
+            )
 
         return False
 
