@@ -1,7 +1,7 @@
 <h1 align="center" style="border-bottom: none;">
     panel.sh
     &middot;
-    Open Source Digital Signage Solution for Raspberry Pi and PC
+    Private White-Label Digital Signage Platform
 </h1>
 
 <p align="center">
@@ -21,15 +21,20 @@
 
 ## :sparkles: About panel.sh
 
-panel.sh is a digital signage platform for Raspberry Pi devices and PCs. It builds on the Anthias/Screenly OSE heritage but is now maintained and distributed under the panel.sh brand to provide a clear, community-driven home.
+panel.sh is a private, white-label digital signage platform built for partners who need reliable, secure, and brandable deployments on Raspberry Pi devices and PCs. It delivers modern content management, remote fleet visibility, and straightforward rollout tools while keeping your customer experience front and center.
 
-:tada: **NEW: Now with Raspberry Pi 5 Support!** :tada:
+### Key capabilities
+
+* Fully brandable interface and end-user experience for partners and OEMs.
+* Consistent playback on Raspberry Pi and x86 hardware with remote monitoring built in.
+* Streamlined onboarding via managed installers and turnkey images for supported devices.
+* Modern CI/CD practices and SBOM reporting to keep deployments transparent and compliant.
 
 Want to help panel.sh thrive? Support us using [GitHub Sponsor](https://github.com/sponsors/panelsh).
 
 ## :rocket: Getting Started
 
-See [this](/docs/installation-options.md) page for options on how to install panel.sh.
+Review the [installation options](/docs/installation-options.md) to select the deployment path that fits your hardware and operating system. These docs cover turnkey images, installer scripts, and any prerequisites specific to your environment.
 
 ## :white_check_mark: Compatibility
 
@@ -76,5 +81,4 @@ See [this](/docs/installation-options.md) page for options on how to install pan
 * [Website](https://panel.sh) (hosted on GitHub and the source is available [here](/website))
 * [General documentation](https://github.com/panelsh/panel.sh/blob/master/docs/README.md)
 * [Developer documentation](https://github.com/panelsh/panel.sh/blob/master/docs/developer-documentation.md)
-* [Migrating assets from panel.sh to Screenly](/docs/migrating-assets-to-screenly.md)
-* [WebView](/webview/README.md)
+
