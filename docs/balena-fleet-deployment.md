@@ -1,8 +1,8 @@
 # Deploying on a Balena fleet
 
 You can use the Balena disk images provided in the releases page to install
-Anthias in your device. However, if you want more control and transparency over
-the Balena deployment, follow through the steps below to deploy Anthias on your
+Panelsh in your device. However, if you want more control and transparency over
+the Balena deployment, follow through the steps below to deploy Panelsh on your
 Balena fleet.
 
 ## Getting started
@@ -68,8 +68,8 @@ Here's a sample output:
 
 ```
 ID      NAME                           VALUE        FLEET
-1979572 BALENA_HOST_CONFIG_dtoverlay    vc4-kms-v3d  gh_nicomiguelino/anthias-pi4
-1979571 BALENA_HOST_CONFIG_gpu_mem      1024         gh_nicomiguelino/anthias-pi4
+1979572 BALENA_HOST_CONFIG_dtoverlay    vc4-kms-v3d  gh_nicomiguelino/panelsh-pi4
+1979571 BALENA_HOST_CONFIG_gpu_mem      1024         gh_nicomiguelino/panelsh-pi4
 ```
 
 > [!TIP]
@@ -83,12 +83,12 @@ ID      NAME                           VALUE        FLEET
 Before proceeding, make sure that you have logged in by running `balena login`.
 You can verify if you're logged in by running `balena whoami`.
 
-Open your terminal and clone the Anthias repository if you haven't already:
+Open your terminal and clone the Panelsh repository if you haven't already:
 
 ```bash
 $ cd $WORKSPACE_DIRECTORY
-$ git clone git@github.com:Screenly/Anthias.git
-$ cd Anthias/
+$ git clone git@github.com:Panelsh/Panelsh.git
+$ cd Panelsh/
 ```
 
 Run the following command:
@@ -162,5 +162,5 @@ a while for the device to appear online.
 
 ![balena-ss-10](/docs/images/balena-deployment-10-downloading-images.png)
 
-Once done, the display should show the Anthias splash screen. You can now
+Once done, the display should show the Panelsh splash screen. You can now
 add assets via the web interface.

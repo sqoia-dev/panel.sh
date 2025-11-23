@@ -83,7 +83,7 @@ jobs:
           balena_cli_commands: |
             preload \
               "$BALENA_IMAGE.img" \
-              --fleet screenly_ose/anthias-${{ matrix.board }} \
+              --fleet panelsh_ose/panelsh-${{ matrix.board }} \
               --pin-device-to-release \
               --splash-image ansible/roles/splashscreen/files/splashscreen.png \
               --commit latest
@@ -97,7 +97,7 @@ jobs:
             os configure \
               "$BALENA_IMAGE.img" \
               --config-network=ethernet  \
-              --fleet screenly_ose/anthias-${{ matrix.board }}
+              --fleet panelsh_ose/panelsh-${{ matrix.board }}
           balena_cli_version: 22.4.4
 
       - name: Package up image
@@ -116,10 +116,10 @@ jobs:
             --arg DOWNLOAD_SIZE "$(wc -c < "$(date -I)-$BALENA_IMAGE.img.zst" | xargs)" \
             --arg RELEASE_DATE "$(date -I)" \
             '{
-              "name": ("Anthias (" + $BOARD + ")"),
-              "description": "Anthias, formerly known as Screenly OSE, is the most popular open source digital signage project in the world.",
-              "icon": "https://raw.githubusercontent.com/Screenly/Anthias/master/static/img/square-dark.svg",
-              "website": "https://anthias.screenly.io",
+              "name": ("Panelsh (" + $BOARD + ")"),
+              "description": "Panelsh, formerly known as Panelsh OSE, is the most popular open source digital signage project in the world.",
+              "icon": "https://raw.githubusercontent.com/Panelsh/Panelsh/master/static/img/square-dark.svg",
+              "website": "https://panelsh.panelsh.io",
               "extract_size": $IMAGE_SIZE,
               "extract_sha256": $IMAGE_SHA256,
               "image_download_size": $DOWNLOAD_SIZE,
@@ -163,7 +163,7 @@ jobs:
       - name: Download OpenAPI schema
         uses: actions/download-artifact@v5
         with:
-          name: anthias-api-schema
+          name: panelsh-api-schema
           path: .
 
       - name: Download balena images
@@ -179,6 +179,6 @@ jobs:
           allowUpdates: true
           generateReleaseNotes: true
           prerelease: true
-          artifacts: "docker-tag,*raspberry*.img.zst,*raspberry*.sha256,*raspberry*.json,anthias-api-schema.json"
+          artifacts: "docker-tag,*raspberry*.img.zst,*raspberry*.sha256,*raspberry*.json,panelsh-api-schema.json"
           tag: ${{ inputs.tag }}
           commit: ${{ inputs.commit }}

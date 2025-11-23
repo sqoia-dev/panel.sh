@@ -5,7 +5,7 @@ import yaml
 from django.shortcuts import render
 from django.utils import timezone
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from lib.github import is_up_to_date
 from lib.utils import get_video_duration
 from settings import settings
@@ -72,7 +72,7 @@ def add_default_assets():
 
     default_assets_yaml = path.join(
         getenv('HOME'),
-        '.screenly/default_assets.yml',
+        '.panelsh/default_assets.yml',
     )
 
     with open(default_assets_yaml, 'r') as yaml_file:

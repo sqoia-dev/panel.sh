@@ -1,0 +1,55 @@
+direction: down
+
+classes: {
+  containers: {
+    shape: rectangle
+  }
+}
+
+user: "User" {
+  shape: person
+}
+
+database: "SQLite3" {
+  shape: cylinder
+}
+
+a {
+  label: null
+  style.fill: transparent
+  style.stroke: transparent
+}
+
+b {
+  label: null
+  style.fill: transparent
+  style.stroke: transparent
+}
+
+b.display: "Display (Monitor or TV)" {
+  style.3d: true
+}
+
+panelsh-nginx.class: containers
+b.panelsh-viewer.class: containers
+a.panelsh-server.class: containers
+a.panelsh-websocket.class: containers
+a.panelsh-celery.class: containers
+a.redis.class: containers
+
+user -> panelsh-nginx
+panelsh-nginx <-> a.panelsh-server
+panelsh-nginx -> a.panelsh-websocket
+
+a.panelsh-server <-> a.panelsh-celery
+a.panelsh-websocket <-> a.panelsh-server
+a.panelsh-celery -> a.redis: "in-memory data"
+a.redis <-> a.panelsh-server
+
+b.panelsh-viewer <-> database: "assets data"
+
+a.panelsh-server <-> b.panelsh-viewer: "assets data"
+a.panelsh-server <-> database
+a.panelsh-celery <-> database
+
+b.panelsh-viewer -> b.display: "current asset"

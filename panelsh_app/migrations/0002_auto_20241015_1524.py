@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('anthias_app', '0001_initial'),
+        ('panelsh_app', '0001_initial'),
     ]
 
     operations = [

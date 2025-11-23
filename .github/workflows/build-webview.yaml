@@ -47,7 +47,7 @@ jobs:
           GIT_SHORT_HASH=$(git rev-parse --short HEAD)
 
           {
-            echo "buildx_args=--cache-from \"screenly/ose-qt-builder:latest\" \
+            echo "buildx_args=--cache-from \"panelsh/ose-qt-builder:latest\" \
             --output \"type=image,push=true\" \
             --build-arg \"BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')\" \
             --build-arg \"GIT_HASH=$GIT_SHORT_HASH\" \
@@ -61,7 +61,7 @@ jobs:
           cd webview
           docker buildx build \
             ${{ steps.prepare.outputs.buildx_args }} \
-            -t screenly/ose-qt-builder:latest .
+            -t panelsh/ose-qt-builder:latest .
 
   compile-webview-part-1:
     name: Compile Webview (Pi 1-4)
@@ -110,7 +110,7 @@ jobs:
             -v ~/tmp/qt-build:/build:Z \
             -v $(pwd):/webview:ro \
             -e TARGET=${{ matrix.board }} \
-            screenly/ose-qt-builder:latest
+            panelsh/ose-qt-builder:latest
           docker exec -it qt-builder /webview/build_webview_with_qt5.sh
           docker rm -f qt-builder
 

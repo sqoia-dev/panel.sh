@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from api.helpers import save_active_assets_ordering
 from api.serializers.mixins import (
     BackupViewSerializerMixin,
@@ -18,7 +18,7 @@ from api.serializers.mixins import (
     RebootViewSerializerMixin,
     ShutdownViewSerializerMixin,
 )
-from celery_tasks import reboot_anthias, shutdown_anthias
+from celery_tasks import reboot_panelsh, shutdown_panelsh
 from lib import backup_helper, diagnostics
 from lib.auth import authorized
 from lib.github import is_up_to_date
@@ -49,7 +49,7 @@ class BackupViewMixin(APIView):
     @extend_schema(
         summary='Create backup',
         description=cleandoc("""
-        Create a backup of the current Anthias instance, which
+        Create a backup of the current Panelsh instance, which
         includes the following:
         * current settings
         * image and video assets
@@ -60,7 +60,7 @@ class BackupViewMixin(APIView):
         responses={
             201: {
                 'type': 'string',
-                'example': 'anthias-backup-2021-09-16T15-00-00.tar.gz',
+                'example': 'panelsh-backup-2021-09-16T15-00-00.tar.gz',
                 'description': 'Backup file name'
             }
         }
@@ -124,7 +124,7 @@ class RebootViewMixin(APIView):
     @extend_schema(summary='Reboot system')
     @authorized
     def post(self, request):
-        reboot_anthias.apply_async()
+        reboot_panelsh.apply_async()
         return Response(status=status.HTTP_200_OK)
 
 
@@ -134,7 +134,7 @@ class ShutdownViewMixin(APIView):
     @extend_schema(summary='Shut down system')
     @authorized
     def post(self, request):
-        shutdown_anthias.apply_async()
+        shutdown_panelsh.apply_async()
         return Response(status=status.HTTP_200_OK)
 
 

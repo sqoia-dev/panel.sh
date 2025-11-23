@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help us improve Anthias
+about: Create a report to help us improve Panelsh
 title: '[BUG] '
 labels: bug
 assignees: ''
@@ -30,6 +30,6 @@ If applicable, add screenshots to help explain your problem.
 
 - Device: [e.g., Raspberry Pi 5, Raspberry Pi 4, PC]
 - OS: [e.g., balenaOS, Raspberry Pi OS 64-bit Bookworm, Trixie (not supported)]
-- Anthias Version: [e.g., v0.19.0]
+- Panelsh Version: [e.g., v0.19.0]
 - Installation Method: [e.g., balenaHub, Release Image, Manual Installation]
 

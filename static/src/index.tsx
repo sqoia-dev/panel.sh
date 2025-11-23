@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store'
 
-import '@/sass/anthias.scss'
+import '@/sass/panelsh.scss'
 import { App } from '@/components/app'
 
 const appElement = document.getElementById('app')

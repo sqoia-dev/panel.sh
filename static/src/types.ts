@@ -71,7 +71,7 @@ export interface WebSocketState {
 }
 
 export interface ExtendedWindow extends Window {
-  anthiasWebSocket?: WebSocket
+  panelshWebSocket?: WebSocket
 }
 
 // Redux store types
@@ -277,7 +277,7 @@ export interface SystemInfoResponse {
   uptime: UptimeInfo
   memory: MemoryInfo
   device_model: string
-  anthias_version: string
+  panelsh_version: string
   mac_address: string
   ip_addresses?: string[]
   host_user?: string

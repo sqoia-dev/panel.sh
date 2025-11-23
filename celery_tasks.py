@@ -22,8 +22,8 @@ except Exception:
     pass
 
 
-__author__ = "Screenly, Inc"
-__copyright__ = "Copyright 2012-2024, Screenly, Inc"
+__author__ = "Panelsh, Inc"
+__copyright__ = "Copyright 2012-2024, Panelsh, Inc"
 __license__ = "Dual License: GPLv2 and Commercial License"
 
 
@@ -34,7 +34,7 @@ CELERY_TASK_RESULT_EXPIRES = timedelta(hours=6)
 
 r = connect_to_redis()
 celery = Celery(
-    'Anthias Celery Worker',
+    'Panelsh Celery Worker',
     backend=CELERY_RESULT_BACKEND,
     broker=CELERY_BROKER_URL,
     result_expires=CELERY_TASK_RESULT_EXPIRES
@@ -57,14 +57,14 @@ def get_display_power():
 @celery.task
 def cleanup():
     sh.find(
-        path.join(getenv('HOME'), 'screenly_assets'),
+        path.join(getenv('HOME'), 'panelsh_assets'),
         '-name', '*.tmp', '-delete')
 
 
 @celery.task
-def reboot_anthias():
+def reboot_panelsh():
     """
-    Background task to reboot Anthias
+    Background task to reboot Panelsh
     """
     if is_balena_app():
         for attempt in Retrying(
@@ -78,9 +78,9 @@ def reboot_anthias():
 
 
 @celery.task
-def shutdown_anthias():
+def shutdown_panelsh():
     """
-    Background task to shutdown Anthias
+    Background task to shutdown Panelsh
     """
     if is_balena_app():
         for attempt in Retrying(

@@ -58,8 +58,8 @@ except Exception:
 standard_library.install_aliases()
 
 
-__author__ = "Screenly, Inc"
-__copyright__ = "Copyright 2012-2024, Screenly, Inc"
+__author__ = "Panelsh, Inc"
+__copyright__ = "Copyright 2012-2024, Panelsh, Inc"
 __license__ = "Dual License: GPLv2 and Commercial License"
 
 
@@ -154,9 +154,9 @@ def load_browser():
     global browser
     logging.info('Loading browser...')
 
-    browser = sh.Command('ScreenlyWebview')(_bg=True, _err_to_out=True)
+    browser = sh.Command('PanelshWebview')(_bg=True, _err_to_out=True)
     while (
-        'Screenly service start' not in browser.process.stdout.decode('utf-8')
+        'Panelsh service start' not in browser.process.stdout.decode('utf-8')
     ):
         sleep(1)
 
@@ -273,7 +273,7 @@ def setup():
     load_browser()
 
     bus = pydbus.SessionBus()
-    browser_bus = bus.get('screenly.webview', '/Screenly')
+    browser_bus = bus.get('panelsh.webview', '/Panelsh')
 
 
 def wait_for_node_ip(seconds):
@@ -306,7 +306,7 @@ def main():
 
     setup()
 
-    subscriber_1 = ZmqSubscriber(r, commands, 'tcp://anthias-server:10001')
+    subscriber_1 = ZmqSubscriber(r, commands, 'tcp://panelsh-server:10001')
     subscriber_1.daemon = True
     subscriber_1.start()
 

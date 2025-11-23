@@ -151,7 +151,7 @@ class BasicAuth(Auth):
     def authenticate(self):
         from django.shortcuts import redirect
         from django.urls import reverse
-        return redirect(reverse('anthias_app:login'))
+        return redirect(reverse('panelsh_app:login'))
 
     def update_settings(self, request, current_pass_correct):
         new_user = request.POST.get('user', '')

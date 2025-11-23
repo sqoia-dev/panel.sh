@@ -1,6 +1,6 @@
-# Anthias Website
+# Panelsh Website
 
-This is the source code for [anthias.screenly.io](https://anthias.screenly.io).
+This is the source code for [panelsh.panelsh.io](https://panelsh.panelsh.io).
 
 ## Local Development
 

@@ -209,7 +209,7 @@
     update_cache: true
   when: not cdefs_exist
 
-- name: Install Anthias dependencies (all platforms)
+- name: Install Panelsh dependencies (all platforms)
   ansible.builtin.apt:
     name:
       - bc
@@ -217,7 +217,7 @@
       - python3-redis
     state: present
 
-- name: Install Anthias dependencies (Raspberry Pi)
+- name: Install Panelsh dependencies (Raspberry Pi)
   ansible.builtin.apt:
     name:
       - rpi-update

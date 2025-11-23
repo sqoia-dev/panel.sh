@@ -3,7 +3,7 @@
 Running unit tests is a good way to make sure that the code is working as expected. However, it's also important to do manual testing as some bugs may not be caught by unit tests. This document contains a list of things that you can do to test the application manually.
 
 > [!NOTE]
-> The list is not exhaustive, but you can use it as your guide when testing Anthias.
+> The list is not exhaustive, but you can use it as your guide when testing Panelsh.
 
 ## General
 
@@ -16,7 +16,7 @@ Running unit tests is a good way to make sure that the code is working as expect
 
 1. Add assets (image, video, or webpage) and make them active by toggling the switch.
 2. Make sure that these assets are shown on the screen.
-3. Disable the assets and make sure that the screen in standby mode, which means that it displays the Anthias standby page.
+3. Disable the assets and make sure that the screen in standby mode, which means that it displays the Panelsh standby page.
 4. Change a duration for any asset and make sure that it is being displayed for the specified duration.
 5. Change a the start and end dates and make sure that the asset is being displayed only during the specified period.
 6. Turn on some assets and change their order (by dragging and dropping them). Make sure that the assets are being displayed in the correct order.

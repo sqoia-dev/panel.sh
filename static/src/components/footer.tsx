@@ -16,7 +16,7 @@ export const Footer = () => {
               </a>
             </span>
           </div>
-          <div id="screenly-logo" className="col-12 row m-2 ms-0 me-0">
+          <div id="panelsh-logo" className="col-12 row m-2 ms-0 me-0">
             <div className="links offset-3 col-6 text-center justify-content-center align-self-center">
               <a
                 href="/api/docs/"

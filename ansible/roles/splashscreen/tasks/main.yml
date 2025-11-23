@@ -60,20 +60,20 @@
 - name: Remove the old Plymouth scripts
   ansible.builtin.file:
     state: absent
-    path: /usr/share/plymouth/themes/screenly/
+    path: /usr/share/plymouth/themes/panelsh/
     owner: root
     group: root
 
 - name: Copies plymouth theme
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: /usr/share/plymouth/themes/anthias/
+    dest: /usr/share/plymouth/themes/panelsh/
     mode: "0644"
     owner: root
     group: root
   with_items:
-    - anthias.plymouth
-    - anthias.script
+    - panelsh.plymouth
+    - panelsh.script
     - splashscreen.png
   when: ansible_distribution_major_version|int > 7
 
@@ -84,9 +84,9 @@
   when: ansible_distribution_major_version|int > 7
 
 - name: Set splashscreen
-  ansible.builtin.command: plymouth-set-default-theme -R anthias
+  ansible.builtin.command: plymouth-set-default-theme -R panelsh
   when: ansible_distribution_major_version|int > 7
-  changed_when: plymouth_theme.stdout != "anthias"
+  changed_when: plymouth_theme.stdout != "panelsh"
 
 - name: Set plymouthd.default
   ansible.builtin.copy:

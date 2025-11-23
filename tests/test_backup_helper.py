@@ -14,12 +14,12 @@ class BackupHelperTest(unittest.TestCase):
     def setUp(self):
         self.dt = datetime(2016, 7, 19, 12, 42, 12)
         self.expected_archive_name = (
-            'anthias-backup-2016-07-19T12-42-12.tar.gz')
+            'panelsh-backup-2016-07-19T12-42-12.tar.gz')
         self.assertFalse(path.isdir(path.join(home, static_dir)))
 
     def tearDown(self):
         shutil.rmtree(
-            path.join(home, 'screenly'),
+            path.join(home, 'panelsh'),
             ignore_errors=True,
         )
 

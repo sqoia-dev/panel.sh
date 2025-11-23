@@ -47,8 +47,8 @@ $swal2-cancel-hover-color: #5a6268;
 
     // Button styling
     .swal2-confirm {
-      color: $anthias-purple-1;
-      background-color: $anthias-yellow-3;
+      color: $panelsh-purple-1;
+      background-color: $panelsh-yellow-3;
       font-size: $swal2-font-size-base;
       font-weight: 500;
       padding: $swal2-padding-button;
@@ -56,7 +56,7 @@ $swal2-cancel-hover-color: #5a6268;
       box-shadow: none;
 
       &:hover {
-        background-color: $anthias-yellow-3;
+        background-color: $panelsh-yellow-3;
       }
     }
 

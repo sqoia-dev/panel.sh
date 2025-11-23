@@ -97,13 +97,13 @@ jobs:
 
       - name: Generate OpenAPI Schema
         run: |
-          docker compose exec anthias-server \
+          docker compose exec panelsh-server \
             ./manage.py spectacular \
             --format openapi-json \
-            --file anthias-api-schema.json
+            --file panelsh-api-schema.json
 
       - name: Upload the OpenAPI Schema
         uses: actions/upload-artifact@v4
         with:
-          name: anthias-api-schema
-          path: anthias-api-schema.json
+          name: panelsh-api-schema
+          path: panelsh-api-schema.json

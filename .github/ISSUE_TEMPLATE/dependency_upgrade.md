@@ -42,7 +42,7 @@ assignees: ''
 
 #### Affected Components
 
-<!-- Which parts of Anthias will be affected? -->
+<!-- Which parts of Panelsh will be affected? -->
 
 - [ ] Frontend
 - [ ] Backend

@@ -1,7 +1,7 @@
 # How to install on a Raspberry Pi 5 with PCI-e SSD
 
 > [!WARNING]
-> Anthias does not currently support devices running Debian Trixie.
+> Panelsh does not currently support devices running Debian Trixie.
 > Please use Raspberry Pi OS Bookworm for the best experience.
 
 ## Hardware
@@ -59,7 +59,7 @@ Once your Pi is booting from the SSD, if you installed the Raspberry Pi OS image
 - If there is an EEPROM update, then use `sudo raspi-config` to update it
 - Go to `6 Advanced Opitions` &rarr; `A5 Bootloader Version` &rarr; `E1 Latest`, then select `Yes`
 - Reboot the Pi.
-- Finally, you'll need to run the Anthias installer: `bash <(curl -sL https://install-anthias.srly.io)`
+- Finally, you'll need to run the Panelsh installer: `bash <(curl -sL https://install-panelsh.srly.io)`
 - Follow the prompts to install and reboot the Pi
 - Once the install has completed, don't forget to change the password for your Pi uinsg `passwd`
 

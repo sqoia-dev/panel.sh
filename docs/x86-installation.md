@@ -1,6 +1,6 @@
 # Installing on x86
 
-Anthias currently supports installing on x86 devices running Debian 12 (Bookworm) via the installation script,
+Panelsh currently supports installing on x86 devices running Debian 12 (Bookworm) via the installation script,
 which means that pre-built BalenaOS disk images are not yet available.
 To make sure that the script will work, you need to install Debian 12 in a specific way.
 

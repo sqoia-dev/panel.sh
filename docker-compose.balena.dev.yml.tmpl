@@ -2,17 +2,17 @@
 
 version: "2"
 services:
-  anthias-wifi-connect:
-    image: screenly/anthias-wifi-connect:${GIT_SHORT_HASH}-${BOARD}
+  panelsh-wifi-connect:
+    image: panelsh/panelsh-wifi-connect:${GIT_SHORT_HASH}-${BOARD}
     build:
       context: .
       dockerfile: ./docker/Dockerfile.wifi-connect
     depends_on:
-      - anthias-viewer
+      - panelsh-viewer
     environment:
       PORTAL_LISTENING_PORT: 8000
       CHECK_CONN_FREQ: 10
-      PORTAL_SSID: 'Anthias WiFi Connect'
+      PORTAL_SSID: 'Panelsh WiFi Connect'
       DBUS_SYSTEM_BUS_ADDRESS: 'unix:path=/host/run/dbus/system_bus_socket'
     network_mode: host
     privileged: true
@@ -20,8 +20,8 @@ services:
       io.balena.features.dbus: "1"
       io.balena.features.firmware: "1"
 
-  anthias-server:
-    image: screenly/anthias-server:${GIT_SHORT_HASH}-${BOARD}
+  panelsh-server:
+    image: panelsh/panelsh-server:${GIT_SHORT_HASH}-${BOARD}
     build:
       context: .
       dockerfile: ./docker/Dockerfile.server
@@ -38,18 +38,18 @@ services:
     labels:
       io.balena.features.supervisor-api: '1'
 
-  anthias-viewer:
-    image: screenly/anthias-viewer:${GIT_SHORT_HASH}-${BOARD}
+  panelsh-viewer:
+    image: panelsh/panelsh-viewer:${GIT_SHORT_HASH}-${BOARD}
     build:
       context: .
       dockerfile: ./docker/Dockerfile.viewer
     depends_on:
-      - anthias-server
+      - panelsh-server
     environment:
       - HOME=/data
       - PORT=80
       - NOREFRESH=1
-      - LISTEN=anthias-nginx
+      - LISTEN=panelsh-nginx
     extra_hosts:
       - "host.docker.internal:host-gateway"
     privileged: true
@@ -60,13 +60,13 @@ services:
     labels:
       io.balena.features.supervisor-api: '1'
 
-  anthias-websocket:
-    image: screenly/anthias-websocket:${GIT_SHORT_HASH}-${BOARD}
+  panelsh-websocket:
+    image: panelsh/panelsh-websocket:${GIT_SHORT_HASH}-${BOARD}
     build:
       context: .
       dockerfile: ./docker/Dockerfile.websocket
     depends_on:
-      - anthias-server
+      - panelsh-server
     environment:
       - HOME=/data
       - LISTEN=0.0.0.0
@@ -74,13 +74,13 @@ services:
     volumes:
       - resin-data:/data
 
-  anthias-celery:
-    image: screenly/anthias-celery:${GIT_SHORT_HASH}-${BOARD}
+  panelsh-celery:
+    image: panelsh/panelsh-celery:${GIT_SHORT_HASH}-${BOARD}
     build:
       context: .
       dockerfile: ./docker/Dockerfile.celery
     depends_on:
-      - anthias-server
+      - panelsh-server
       - redis
     environment:
       - HOME=/data
@@ -95,7 +95,7 @@ services:
       io.balena.features.supervisor-api: '1'
 
   redis:
-    image: screenly/anthias-redis:${GIT_SHORT_HASH}-${BOARD}
+    image: panelsh/panelsh-redis:${GIT_SHORT_HASH}-${BOARD}
     build:
       context: .
       dockerfile: ./docker/Dockerfile.redis
@@ -105,8 +105,8 @@ services:
     volumes:
       - redis-data:/var/lib/redis
 
-  anthias-nginx:
-    image: screenly/anthias-nginx:${GIT_SHORT_HASH}-${BOARD}
+  panelsh-nginx:
+    image: panelsh/panelsh-nginx:${GIT_SHORT_HASH}-${BOARD}
     build:
       context: .
       dockerfile: ./docker/Dockerfile.nginx
@@ -115,8 +115,8 @@ services:
     environment:
       - HOME=/data
     depends_on:
-      - anthias-server
-      - anthias-websocket
+      - panelsh-server
+      - panelsh-websocket
     restart: always
     volumes:
       - resin-data:/data:ro

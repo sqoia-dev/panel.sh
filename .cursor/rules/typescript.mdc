@@ -3,7 +3,7 @@ description:
 globs:
 alwaysApply: true
 ---
-- Anthias uses TypeScript and React for the front-end framework.
+- Panelsh uses TypeScript and React for the front-end framework.
 - We use Prettier for formatting and ESLint for linting. Check `README.md` for docs
 on how to run them.
 - Make sure that generated code conforms to the project's coding standards.

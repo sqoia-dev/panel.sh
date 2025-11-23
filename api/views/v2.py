@@ -12,8 +12,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from anthias_app.helpers import add_default_assets, remove_default_assets
-from anthias_app.models import Asset
+from panelsh_app.helpers import add_default_assets, remove_default_assets
+from panelsh_app.models import Asset
 from api.helpers import (
     AssetCreationError,
     get_active_asset_ids,
@@ -376,7 +376,7 @@ class DeviceSettingsViewV2(APIView):
 
 
 class InfoViewV2(InfoViewMixin):
-    def get_anthias_version(self):
+    def get_panelsh_version(self):
         git_branch = diagnostics.get_git_branch()
         git_short_hash = diagnostics.get_git_short_hash()
 
@@ -439,7 +439,7 @@ class InfoViewV2(InfoViewMixin):
                     'free_space': {'type': 'string'},
                     'display_power': {'type': ['string', 'null']},
                     'up_to_date': {'type': 'boolean'},
-                    'anthias_version': {'type': 'string'},
+                    'panelsh_version': {'type': 'string'},
                     'device_model': {'type': 'string'},
                     'uptime': {
                         'type': 'object',
@@ -483,7 +483,7 @@ class InfoViewV2(InfoViewMixin):
             'free_space': free_space,
             'display_power': display_power,
             'up_to_date': is_up_to_date(),
-            'anthias_version': self.get_anthias_version(),
+            'panelsh_version': self.get_panelsh_version(),
             'device_model': self.get_device_model(),
             'uptime': self.get_uptime(),
             'memory': self.get_memory(),

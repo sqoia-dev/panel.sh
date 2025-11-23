@@ -29,7 +29,7 @@ from tenacity import (
     wait_fixed,
 )
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from settings import ZmqPublisher, settings
 
 standard_library.install_aliases()
@@ -388,7 +388,7 @@ def download_video_from_youtube(uri, asset_id):
 
     location = path.join(
         home,
-        'screenly_assets',
+        'panelsh_assets',
         f'{asset_id}.mp4'
     )
     thread = YoutubeDownloadThread(location, uri, asset_id)

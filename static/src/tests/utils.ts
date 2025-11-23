@@ -31,7 +31,7 @@ export function createMockServer(overrides: Partial<MockResponses> = {}) {
       available: 3927,
     },
     device_model: 'Generic x86_64 Device',
-    anthias_version: 'master@3a4747f',
+    panelsh_version: 'master@3a4747f',
     mac_address: 'Unable to retrieve MAC address.',
     ip_addresses: ['192.168.1.100', '10.0.0.50'],
     host_user: 'pi',

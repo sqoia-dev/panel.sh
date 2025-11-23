@@ -9,7 +9,7 @@ and `raspberrypi` for the hostname, then run:
 $ ssh pi@raspberrypi
 ```
 
-Anthias makes use of Docker for containerization. To get the logs from the
+Panelsh makes use of Docker for containerization. To get the logs from the
 containers, you can either make use of the `docker logs` command or you can
 use the `docker-compose logs` command.
 
@@ -18,7 +18,7 @@ use the `docker-compose logs` command.
 For instance, the command below will show you the logs from the server container:
 
 ```bash
-$ docker logs -f panelsh-anthias-server-1
+$ docker logs -f panelsh-panelsh-server-1
 ```
 
 If you'd want to see the logs from other containers, simply replace the name
@@ -27,13 +27,13 @@ of the container in the command above. Here's a table of the available container
 <!-- create a two-column table -->
 | Container Name | Description |
 | -------------- | ----------- |
-| `panelsh-anthias-nginx-1` | NGINX service |
-| `panelsh-anthias-viewer-1` | Viewer service |
-| `panelsh-anthias-celery-1` | Celery service |
-| `panelsh-anthias-websocket-1` | WebSocket service |
-| `panelsh-anthias-server-1` | web UI (front-end and back-end) |
-| `panelsh-anthias-redis-1` | Redis (database, cache, message broker) |
-| `panelsh-anthias-wifi-connect-1` | Wi-Fi connectivity |
+| `panelsh-panelsh-nginx-1` | NGINX service |
+| `panelsh-panelsh-viewer-1` | Viewer service |
+| `panelsh-panelsh-celery-1` | Celery service |
+| `panelsh-panelsh-websocket-1` | WebSocket service |
+| `panelsh-panelsh-server-1` | web UI (front-end and back-end) |
+| `panelsh-panelsh-redis-1` | Redis (database, cache, message broker) |
+| `panelsh-panelsh-wifi-connect-1` | Wi-Fi connectivity |
 
 ### Using `docker-compose logs`
 
@@ -50,21 +50,21 @@ you can run the following:
 
 ```bash
 $ docker compose logs -f ${SERVICE_NAME}
-# e.g., docker compose logs -f anthias-server
+# e.g., docker compose logs -f panelsh-server
 ```
 
-Check out [this section](/docs/developer-documentation.md#understanding-the-components-that-make-up-anthias) of the Developer documentation page for the list of available services.
+Check out [this section](/docs/developer-documentation.md#understanding-the-components-that-make-up-panelsh) of the Developer documentation page for the list of available services.
 
 ## Enabling SSH
 
 See [the official documentation](https://www.raspberrypi.org/documentation/remote-access/ssh/)
 
-## Updating Anthias
+## Updating Panelsh
 
 Run the following command in your console:
 
 ```bash
-$ bash <(curl -sL https://install-anthias.srly.io)
+$ bash <(curl -sL https://install-panelsh.srly.io)
 ```
 
 Alternatively, you can also run the following command:

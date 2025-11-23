@@ -4,7 +4,7 @@ from random import shuffle
 
 from django.utils import timezone
 
-from anthias_app.models import Asset
+from panelsh_app.models import Asset
 from settings import settings
 
 

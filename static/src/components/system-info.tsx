@@ -92,7 +92,7 @@ export const SystemInfo = () => {
       setUptime(systemInfo.uptime)
       setDisplayPower(systemInfo.display_power)
       setDeviceModel(systemInfo.device_model)
-      setPanelVersion(systemInfo.anthias_version)
+      setPanelVersion(systemInfo.panelsh_version)
       setMacAddress(systemInfo.mac_address)
       setPlayerName(settingsData.player_name ?? '')
     } catch {
