@@ -37,6 +37,8 @@ standard_library.install_aliases()
 
 arch = machine()
 
+logger = logging.getLogger(__name__)
+
 # This will only work on the Raspberry Pi,
 # so let's wrap it in a try/except so that
 # Travis can run.
@@ -84,12 +86,44 @@ def validate_url(string):
 
 def get_balena_supervisor_api_response(method, action, **kwargs):
     version = kwargs.get('version', 'v1')
-    return getattr(requests, method)('{}/{}/{}?apikey={}'.format(
-        os.getenv('BALENA_SUPERVISOR_ADDRESS'),
+    timeout = kwargs.get('timeout')
+    supervisor_address = os.getenv('BALENA_SUPERVISOR_ADDRESS')
+    supervisor_url = '{}/{}/{}'.format(
+        supervisor_address,
         version,
         action,
+    )
+    request_url = '{}?apikey={}'.format(
+        supervisor_url,
         os.getenv('BALENA_SUPERVISOR_API_KEY'),
-    ), headers={'Content-Type': 'application/json'})
+    )
+
+    log_context = {
+        'method': method,
+        'supervisor_url': supervisor_url,
+        'timeout': timeout,
+    }
+
+    logger.info('Calling Balena supervisor', extra=log_context)
+
+    try:
+        response = getattr(requests, method)(
+            request_url,
+            headers={'Content-Type': 'application/json'},
+            timeout=timeout,
+        )
+    except requests.exceptions.RequestException as error:
+        logger.warning(
+            'Balena supervisor request failed',
+            extra={**log_context, 'error': str(error)},
+        )
+        raise
+
+    logger.info(
+        'Balena supervisor request completed',
+        extra={**log_context, 'status_code': response.status_code},
+    )
+    return response
 
 
 def get_balena_device_info():
