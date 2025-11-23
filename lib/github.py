@@ -144,37 +144,36 @@ def get_latest_docker_hub_hash(device_type):
     cached_docker_hub_hash = r.get('latest-docker-hub-hash')
 
     if cached_docker_hub_hash:
-        try:
-            response = requests_get(url, timeout=DEFAULT_REQUESTS_TIMEOUT)
-            response.raise_for_status()
-        except exceptions.RequestException as exc:
-            logging.debug('Failed to fetch latest Docker Hub tags: %s', exc)
-            return None
+        return cached_docker_hub_hash
 
-        data = response.json()
-        results = data['results']
+    try:
+        response = requests_get(url, timeout=DEFAULT_REQUESTS_TIMEOUT)
+        response.raise_for_status()
+    except exceptions.RequestException as exc:
+        logging.debug('Failed to fetch latest Docker Hub tags: %s', exc)
+        return None
 
-        reduced = [
-            result['name'].split('-')[0]
-            for result in results
-            if not result['name'].startswith('latest-')
-            and result['name'].endswith(f'-{device_type}')
-        ]
+    data = response.json()
+    results = data['results']
 
-        if len(reduced) == 0:
-            logging.warning(
-                'No commit hash found for device type: %s', device_type)
-            return None
+    reduced = [
+        result['name'].split('-')[0]
+        for result in results
+        if not result['name'].startswith('latest-')
+        and result['name'].endswith(f'-{device_type}')
+    ]
 
-        docker_hub_hash = reduced[0]
-        r.set('latest-docker-hub-hash', docker_hub_hash)
-        r.expire('latest-docker-hub-hash', DOCKER_HUB_HASH_TTL)
+    if len(reduced) == 0:
+        logging.warning('No commit hash found for device type: %s', device_type)
+        return None
 
-        # Results are sorted by date in descending order,
-        # so we can just return the first one.
-        return reduced[0]
+    docker_hub_hash = reduced[0]
+    r.set('latest-docker-hub-hash', docker_hub_hash)
+    r.expire('latest-docker-hub-hash', DOCKER_HUB_HASH_TTL)
 
-    return cached_docker_hub_hash
+    # Results are sorted by date in descending order,
+    # so we can just return the first one.
+    return docker_hub_hash
 
 
 def is_up_to_date():
