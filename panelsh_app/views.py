@@ -1,15 +1,11 @@
-import ipaddress
-
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from lib.auth import authorized, hash_password
-from lib.utils import (
-    connect_to_redis,
-    get_node_ip,
-)
+from lib.utils import connect_to_redis, get_node_network_metadata
 from settings import settings
 
 from .helpers import (
@@ -49,16 +45,11 @@ def login(request):
 
 @require_http_methods(["GET"])
 def splash_page(request):
-    ip_addresses = []
-
-    for ip_address in get_node_ip().split():
-        ip_address_object = ipaddress.ip_address(ip_address)
-
-        if isinstance(ip_address_object, ipaddress.IPv6Address):
-            ip_addresses.append(f'http://[{ip_address}]')
-        else:
-            ip_addresses.append(f'http://{ip_address}')
-
     return template(request, 'splash-page.html', {
-        'ip_addresses': ip_addresses
+        'ip_addresses': get_node_network_metadata()['ip_addresses']
     })
+
+
+@require_http_methods(["GET"])
+def splash_page_metadata(request):
+    return JsonResponse(get_node_network_metadata())
