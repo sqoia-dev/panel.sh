@@ -107,12 +107,20 @@ class AssetViewV2(APIView, DeleteAssetViewMixin):
     @extend_schema(summary='Get asset')
     @authorized
     def get(self, request, asset_id):
-        asset = Asset.objects.get(asset_id=asset_id)
+        try:
+            asset = Asset.objects.get(asset_id=asset_id)
+        except Asset.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         serializer = self.serializer_class(asset)
         return Response(serializer.data)
 
     def update(self, request, asset_id, partial=False):
-        asset = Asset.objects.get(asset_id=asset_id)
+        try:
+            asset = Asset.objects.get(asset_id=asset_id)
+        except Asset.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         serializer = UpdateAssetSerializerV2(
             asset, data=request.data, partial=partial)
 
