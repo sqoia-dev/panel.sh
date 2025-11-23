@@ -156,10 +156,19 @@ def reboot_via_balena_supervisor():
 def get_balena_supervisor_version():
     response = get_balena_supervisor_api_response(
         method='get', action='version', version='v2')
+    result = {'status_code': response.status_code}
+
     if response.ok:
-        return response.json()['version']
+        try:
+            result['version'] = response.json().get('version')
+        except ValueError:
+            result['version'] = None
+            result['error'] = 'Invalid Supervisor response JSON'
     else:
-        return 'Error getting the Supervisor version'
+        result['version'] = None
+        result['error'] = 'Error getting the Supervisor version'
+
+    return result
 
 
 def is_local_environment(environment=None):
