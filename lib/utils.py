@@ -1,10 +1,12 @@
 from __future__ import absolute_import, unicode_literals
 
+import ipaddress
 import json
 import logging
 import os
 import random
 import re
+import socket
 import string
 from builtins import range, str
 from datetime import datetime, timedelta
@@ -190,6 +192,26 @@ def wait_for_truthy_redis_key(
     except RetryError:
         log_level(failure_message)
     return False
+
+
+def get_node_network_metadata():
+    hostname = os.getenv('HOSTNAME') or socket.gethostname()
+    node_ip = get_node_ip()
+
+    ip_addresses = []
+    if node_ip != 'Unable to retrieve IP.':
+        for ip_address in node_ip.split():
+            ip_address_object = ipaddress.ip_address(ip_address)
+
+            if isinstance(ip_address_object, ipaddress.IPv6Address):
+                ip_addresses.append(f'http://[{ip_address}]')
+            else:
+                ip_addresses.append(f'http://{ip_address}')
+
+    return {
+        'hostname': hostname,
+        'ip_addresses': ip_addresses,
+    }
 
 
 def get_node_ip():
