@@ -46,6 +46,8 @@ from lib import device_helper, diagnostics
 from lib.auth import authorized, hash_password
 from lib.github import is_up_to_date
 from lib.utils import (
+    check_redis_health,
+    check_zmq_health,
     connect_to_redis,
     get_node_ip,
     get_node_mac_address,
@@ -726,3 +728,50 @@ class IntegrationsViewV2(APIView):
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
+
+
+class HealthViewV2(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    @extend_schema(
+        summary='Service health check',
+        responses={
+            200: {
+                'type': 'object',
+                'properties': {
+                    'status': {'type': 'string', 'enum': ['ok', 'degraded']},
+                    'services': {
+                        'type': 'object',
+                        'properties': {
+                            'redis': {'type': 'object'},
+                            'zmq': {'type': 'object'},
+                        },
+                    },
+                },
+                'example': {
+                    'status': 'ok',
+                    'services': {
+                        'redis': {'status': 'ok'},
+                        'zmq': {'status': 'ok'},
+                    },
+                },
+            }
+        }
+    )
+    def get(self, request):
+        redis_status = check_redis_health()
+        zmq_status = check_zmq_health()
+
+        degraded = any(
+            service.get('status') != 'ok'
+            for service in (redis_status, zmq_status)
+        )
+
+        return Response({
+            'status': 'degraded' if degraded else 'ok',
+            'services': {
+                'redis': redis_status,
+                'zmq': zmq_status,
+            },
+        })
