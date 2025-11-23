@@ -6,6 +6,7 @@ import os
 import random
 import string
 from builtins import range, str
+from datetime import datetime, timedelta, timezone
 
 from requests import exceptions
 from requests import get as requests_get
@@ -14,7 +15,7 @@ from requests import post as requests_post
 from lib.device_helper import parse_cpu_info
 from lib.diagnostics import get_git_branch, get_git_hash, get_git_short_hash
 from lib.utils import connect_to_redis, is_balena_app, is_ci, is_docker
-from settings import settings
+from settings import CONFIG_DIR, settings
 
 r = connect_to_redis()
 
@@ -34,6 +35,77 @@ ANALYTICS_MEASURE_ID = os.getenv('ANALYTICS_MEASUREMENT_ID')
 ANALYTICS_API_SECRET = os.getenv('ANALYTICS_API_SECRET')
 
 DEFAULT_REQUESTS_TIMEOUT = 1  # in seconds
+
+DEVICE_ID_ROTATION_DAYS = 30
+DEVICE_ID_FILE = 'device_id.json'
+
+
+def _device_id_path():
+    return os.path.join(settings.home, CONFIG_DIR, DEVICE_ID_FILE)
+
+
+def _generate_device_id():
+    return ''.join(
+        random.choice(string.ascii_lowercase + string.digits)
+        for _ in range(15)
+    )
+
+
+def _persist_device_identity(device_id, created_at):
+    device_dir = os.path.dirname(_device_id_path())
+    os.makedirs(device_dir, mode=0o700, exist_ok=True)
+
+    payload = {
+        'device_id': device_id,
+        'created_at': created_at.isoformat(),
+    }
+
+    with os.fdopen(
+        os.open(_device_id_path(), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600),
+        'w',
+    ) as device_file:
+        device_file.write(json.dumps(payload))
+
+
+def _load_persisted_device_identity():
+    try:
+        with open(_device_id_path(), 'r') as device_file:
+            payload = json.load(device_file)
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return None, None
+
+    device_id = payload.get('device_id')
+    created_at = payload.get('created_at')
+
+    if not device_id or not created_at:
+        return None, None
+
+    try:
+        created_datetime = datetime.fromisoformat(created_at)
+    except ValueError:
+        return None, None
+
+    if created_datetime.tzinfo is None:
+        created_datetime = created_datetime.replace(tzinfo=timezone.utc)
+
+    return device_id, created_datetime
+
+
+def get_rotating_device_id():
+    device_id, created_at = _load_persisted_device_identity()
+    now = datetime.now(timezone.utc)
+
+    if not device_id or not created_at:
+        device_id = _generate_device_id()
+        created_at = now
+        _persist_device_identity(device_id, created_at)
+        return device_id
+
+    if now - created_at >= timedelta(days=DEVICE_ID_ROTATION_DAYS):
+        device_id = _generate_device_id()
+        _persist_device_identity(device_id, now)
+
+    return device_id
 
 
 def handle_github_error(exc, action):
@@ -186,20 +258,11 @@ def is_up_to_date():
     git_branch = get_git_branch()
     git_hash = get_git_hash()
     git_short_hash = get_git_short_hash()
-    get_device_id = r.get('device_id')
+    device_id = get_rotating_device_id()
 
     if not latest_sha:
         logging.error('Unable to get latest version from GitHub')
         return True
-
-    if not get_device_id:
-        device_id = ''.join(
-            random.choice(string.ascii_lowercase + string.digits)
-            for _ in range(15)
-        )
-        r.set('device_id', device_id)
-    else:
-        device_id = get_device_id
 
     if retrieved_update:
         if not settings['analytics_opt_out'] and not is_ci():
