@@ -1,4 +1,6 @@
+import hashlib
 import ipaddress
+import json
 import logging
 from datetime import timedelta
 from os import getenv, statvfs
@@ -73,6 +75,23 @@ class AssetListViewV2(APIView):
 
         raise ValueError(f"Invalid boolean value for '{name}'")
 
+    @staticmethod
+    def _generate_etag(payload):
+        serialized = json.dumps(payload, sort_keys=True, separators=(',', ':'))
+        digest = hashlib.md5(serialized.encode('utf-8')).hexdigest()
+        return f'W/"{digest}"'
+
+    def _matches_if_none_match(self, request, etag):
+        client_header = request.headers.get('If-None-Match')
+        if not client_header:
+            return False
+
+        for candidate in client_header.split(','):
+            if candidate.strip() == etag:
+                return True
+
+        return False
+
     @extend_schema(
         summary='List assets',
         responses={
@@ -139,16 +158,36 @@ class AssetListViewV2(APIView):
             total_count = queryset.count()
             paginated_queryset = queryset[start:end]
             serializer = AssetSerializerV2(paginated_queryset, many=True)
-
-            return Response({
+            response_payload = {
                 'count': total_count,
                 'page': page_number,
                 'page_size': page_limit,
                 'results': serializer.data,
-            })
+            }
+
+            etag = self._generate_etag(response_payload)
+
+            if self._matches_if_none_match(request, etag):
+                response = Response(status=status.HTTP_304_NOT_MODIFIED)
+                response['ETag'] = etag
+                return response
+
+            response = Response(response_payload)
+            response['ETag'] = etag
+            return response
 
         serializer = AssetSerializerV2(queryset, many=True)
-        return Response(serializer.data)
+        response_payload = serializer.data
+        etag = self._generate_etag(response_payload)
+
+        if self._matches_if_none_match(request, etag):
+            response = Response(status=status.HTTP_304_NOT_MODIFIED)
+            response['ETag'] = etag
+            return response
+
+        response = Response(response_payload)
+        response['ETag'] = etag
+        return response
 
     @extend_schema(
         summary='Create asset',
