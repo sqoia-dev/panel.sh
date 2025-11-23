@@ -13,6 +13,7 @@ from os import getenv, path, utime
 from platform import machine
 from subprocess import call, check_output
 from threading import Thread
+from time import monotonic, sleep
 from urllib.parse import urlparse
 
 import certifi
@@ -36,7 +37,8 @@ standard_library.install_aliases()
 
 arch = machine()
 
-LOCAL_ENVIRONMENTS = ['development', 'test']
+logger = logging.getLogger(__name__)
+
 
 # This will only work on the Raspberry Pi,
 # so let's wrap it in a try/except so that
@@ -84,13 +86,59 @@ def validate_url(string):
 
 
 def get_balena_supervisor_api_response(method, action, **kwargs):
-    version = kwargs.get('version', 'v1')
-    return getattr(requests, method)('{}/{}/{}?apikey={}'.format(
-        os.getenv('BALENA_SUPERVISOR_ADDRESS'),
+    version = kwargs.pop('version', 'v1')
+    timeout = kwargs.pop('timeout', None)
+    supervisor_address = os.getenv('BALENA_SUPERVISOR_ADDRESS')
+    supervisor_url = '{}/{}/{}'.format(
+        supervisor_address,
         version,
         action,
+    )
+    request_url = '{}?apikey={}'.format(
+        supervisor_url,
         os.getenv('BALENA_SUPERVISOR_API_KEY'),
-    ), headers={'Content-Type': 'application/json'})
+    )
+
+    log_context = {
+        'method': method,
+        'request_target': supervisor_url,
+        'supervisor_url': supervisor_url,
+        'timeout': timeout,
+    }
+
+    logger.info('Calling Balena supervisor', extra=log_context)
+
+    request_kwargs = {
+        'headers': {'Content-Type': 'application/json'},
+        'timeout': timeout,
+        **kwargs,
+    }
+    if 'headers' in kwargs:
+        request_kwargs['headers'] = {
+            **{'Content-Type': 'application/json'},
+            **kwargs['headers'],
+        }
+
+    start_time = monotonic()
+    try:
+        response = getattr(requests, method)(request_url, **request_kwargs)
+    except requests.exceptions.RequestException as error:
+        logger.warning(
+            'Balena supervisor request failed',
+            extra={**log_context, 'error': str(error)},
+        )
+        raise
+
+    elapsed_seconds = monotonic() - start_time
+    logger.info(
+        'Balena supervisor request completed',
+        extra={
+            **log_context,
+            'status_code': response.status_code,
+            'duration_seconds': round(elapsed_seconds, 3),
+        },
+    )
+    return response
 
 
 def get_balena_device_info():
