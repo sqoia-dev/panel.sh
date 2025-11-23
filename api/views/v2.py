@@ -207,9 +207,33 @@ class DeviceSettingsViewV2(APIView):
         try:
             # Force reload of settings
             settings.load()
-        except Exception as e:
-            logging.error(f'Failed to reload settings: {str(e)}')
-            # Continue with existing settings if reload fails
+        except FileNotFoundError as error:
+            logging.error("Settings file missing during reload: %s", error)
+            return Response(
+                {
+                    'error': 'settings_not_found',
+                    'message': 'Settings file missing during reload',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except PermissionError as error:
+            logging.error("Permission denied reloading settings: %s", error)
+            return Response(
+                {
+                    'error': 'settings_permission_denied',
+                    'message': 'Permission denied reloading settings',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception:
+            logging.exception('Unexpected error reloading settings')
+            return Response(
+                {
+                    'error': 'settings_reload_failed',
+                    'message': 'Failed to reload device settings',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         return Response({
             'player_name': settings['player_name'],
