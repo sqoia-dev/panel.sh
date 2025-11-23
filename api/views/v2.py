@@ -50,6 +50,7 @@ from lib.utils import (
 from settings import ZmqPublisher, settings
 
 r = connect_to_redis()
+logger = logging.getLogger(__name__)
 
 
 class AssetListViewV2(APIView):
@@ -322,8 +323,18 @@ class DeviceSettingsViewV2(APIView):
             },
             400: {
                 'type': 'object',
-                'properties': {'error': {'type': 'string'}}
-            }
+                'properties': {
+                    'error': {'type': 'string'},
+                    'error_type': {'type': 'string'},
+                }
+            },
+            500: {
+                'type': 'object',
+                'properties': {
+                    'error': {'type': 'string'},
+                    'error_type': {'type': 'string'},
+                }
+            },
         }
     )
     @authorized
@@ -399,10 +410,26 @@ class DeviceSettingsViewV2(APIView):
             publisher.send_to_viewer('reload')
 
             return Response({'message': 'Settings were successfully saved.'})
-        except Exception as e:
+        except ValueError as error:
+            logger.warning(
+                'Validation error while saving device settings',
+                exc_info=True,
+            )
             return Response(
-                {'error': f'An error occurred while saving settings: {e}'},
-                status=400
+                {
+                    'error': str(error),
+                    'error_type': type(error).__name__,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as error:
+            logger.exception('Unexpected error while saving device settings')
+            return Response(
+                {
+                    'error': str(error),
+                    'error_type': type(error).__name__,
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
