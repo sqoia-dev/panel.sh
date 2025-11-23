@@ -1,6 +1,6 @@
 # Documentation
 
-## How to get logs from Anthias
+## How to get logs from panel.sh
 
 SSH into your Raspberry Pi. For instance, if you've set `pi` for the username
 and `raspberrypi` for the hostname, then run:
@@ -18,7 +18,7 @@ use the `docker-compose logs` command.
 For instance, the command below will show you the logs from the server container:
 
 ```bash
-$ docker logs -f screenly-anthias-server-1
+$ docker logs -f panelsh-anthias-server-1
 ```
 
 If you'd want to see the logs from other containers, simply replace the name
@@ -27,22 +27,22 @@ of the container in the command above. Here's a table of the available container
 <!-- create a two-column table -->
 | Container Name | Description |
 | -------------- | ----------- |
-| `screenly-anthias-nginx-1` | NGINX service |
-| `screenly-anthias-viewer-1` | Viewer service |
-| `screenly-anthias-celery-1` | Celery service |
-| `screenly-anthias-websocket-1` | WebSocket service |
-| `screenly-anthias-server-1` | web UI (front-end and back-end) |
-| `screenly-anthias-redis-1` | Redis (database, cache, message broker) |
-| `screenly-anthias-wifi-connect-1` | Wi-Fi connectivity |
+| `panelsh-anthias-nginx-1` | NGINX service |
+| `panelsh-anthias-viewer-1` | Viewer service |
+| `panelsh-anthias-celery-1` | Celery service |
+| `panelsh-anthias-websocket-1` | WebSocket service |
+| `panelsh-anthias-server-1` | web UI (front-end and back-end) |
+| `panelsh-anthias-redis-1` | Redis (database, cache, message broker) |
+| `panelsh-anthias-wifi-connect-1` | Wi-Fi connectivity |
 
 ### Using `docker-compose logs`
 
 > [!IMPORTANT]
 > Before running the succeeding commands, make sure that you're in the
-> `/home/${USER}/screenly` directory:
+> `/home/${USER}/panel.sh` directory:
 > 
 > ```bash
-> $ cd /home/${USER}/screenly # e.g., /home/pi/screenly if the user is `pi`
+> $ cd /home/${USER}/panel.sh # e.g., /home/pi/panel.sh if the user is `pi`
 > ```
 
 If you'd like to see the logs of a specific container or service via Docker Compose,
@@ -70,7 +70,7 @@ $ bash <(curl -sL https://install-anthias.srly.io)
 Alternatively, you can also run the following command:
 
 ```bash
-$ $HOME/screenly/bin/run_upgrade.sh
+$ $HOME/panel.sh/bin/run_upgrade.sh
 ```
 
 ## Accessing the REST API
@@ -85,7 +85,7 @@ if you're in development mode). You should see the API docs for the endpoints.
 > With running the following script, you can install self-signed certificates:
 > 
 > ```bash
-> $ cd $HOME/screenly
+> $ cd $HOME/panel.sh
 > $ ./bin/add_certificate.sh /path/to/certificate.crt
 > ```
 

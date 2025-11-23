@@ -242,18 +242,18 @@ $ git push --delete origin v0.18.5           [±master ✓]
 ## Directories and files explained
 
 In this section, we'll explain the different directories and files that are
-present in a Raspberry Pi with Anthias installed.
+present in a Raspberry Pi with panel.sh installed.
 
-### `home/${USER}/screenly/`
+### `/home/${USER}/panel.sh/`
 
-* All of the files and folders from the Github repo should be cloned into this directory.
+* All of the files and folders from the Github repo should be cloned into this directory (this replaced the legacy `/home/${USER}/screenly/` path).
 
-### `/home/${USER}/.screenly/`
+### `/home/${USER}/.panel.sh/`
 
 * `default_assets.yml` &mdash; configuration file which contains the default assets that get added to the assets list if enabled
 * `initialized` &mdash; tells whether access point service (for Wi-Fi connectivity) runs or not
-* `screenly.conf` &mdash; configuration file for web interface settings
-* `screenly.db` &ndash; database file containing current assets information.
+* `screenly.conf` &mdash; configuration file for web interface settings (legacy name retained for compatibility)
+* `screenly.db` &ndash; database file containing current assets information (legacy name retained for compatibility)
 
 
 ### `/etc/systemd/system/`
