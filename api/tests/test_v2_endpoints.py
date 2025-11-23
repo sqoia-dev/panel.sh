@@ -296,8 +296,8 @@ class DeviceSettingsViewV2Test(TestCase):
 
     @mock.patch('api.views.v2.settings')
     @mock.patch('api.views.v2.ZmqPublisher')
-    @mock.patch('api.views.v2.add_default_assets')
-    @mock.patch('api.views.v2.remove_default_assets')
+    @mock.patch('api.views.v2.add_default_assets_task')
+    @mock.patch('api.views.v2.remove_default_assets_task')
     def test_patch_device_settings_default_assets(
         self,
         remove_default_assets_mock,
@@ -345,8 +345,8 @@ class DeviceSettingsViewV2Test(TestCase):
         settings_mock.load.assert_called_once()
         settings_mock.save.assert_called_once()
         settings_mock.__setitem__.assert_any_call('default_assets', True)
-        add_default_assets_mock.assert_called_once()
-        remove_default_assets_mock.assert_not_called()
+        add_default_assets_mock.delay.assert_called_once()
+        remove_default_assets_mock.delay.assert_not_called()
         publisher_instance.send_to_viewer.assert_called_once_with('reload')
 
         # Reset mocks
@@ -392,8 +392,8 @@ class DeviceSettingsViewV2Test(TestCase):
         settings_mock.load.assert_called_once()
         settings_mock.save.assert_called_once()
         settings_mock.__setitem__.assert_any_call('default_assets', False)
-        remove_default_assets_mock.assert_called_once()
-        add_default_assets_mock.assert_not_called()
+        remove_default_assets_mock.delay.assert_called_once()
+        add_default_assets_mock.delay.assert_not_called()
         publisher_instance.send_to_viewer.assert_called_once_with('reload')
 
 
