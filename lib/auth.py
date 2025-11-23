@@ -15,6 +15,17 @@ from future.utils import with_metaclass
 LINUX_USER = os.getenv('USER', 'pi')
 
 
+def hash_password(password):
+    """Return a SHA256 hex digest for a given password.
+
+    Accepts either ``str`` or ``bytes`` input and ensures UTF-8 encoding
+    for string values before hashing.
+    """
+    if isinstance(password, str):
+        password = password.encode('utf-8')
+    return hashlib.sha256(password).hexdigest()
+
+
 class Auth(with_metaclass(ABCMeta, object)):
     @abstractmethod
     def authenticate(self):
@@ -163,7 +174,7 @@ class BasicAuth(Auth):
         )
 
     def check_password(self, password):
-        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        hashed_password = hash_password(password)
         return self.settings['password'] == hashed_password
 
     def is_authenticated(self, request):
@@ -203,10 +214,42 @@ class BasicAuth(Auth):
         new_user = request.POST.get('user', '')
         new_pass = request.POST.get('password', '')
         new_pass2 = request.POST.get('password2', '')
+        new_pass = hash_password(new_pass) if new_pass else None
+        new_pass2 = hash_password(new_pass2) if new_pass2 else None
+        if self.settings['password']:  # if password currently set,
+            if new_user != self.settings['user']:  # trying to change user
+                # Should have current password set.
+                # Optionally may change password.
+                if current_pass_correct is None:
+                    raise ValueError(
+                        "Must supply current password to change username")
+                if not current_pass_correct:
+                    raise ValueError("Incorrect current password.")
 
-        update_basic_auth_credentials(
-            self.settings, new_user, new_pass, new_pass2, current_pass_correct
-        )
+                self.settings['user'] = new_user
+
+            if new_pass:
+                if current_pass_correct is None:
+                    raise ValueError(
+                        "Must supply current password to change password")
+                if not current_pass_correct:
+                    raise ValueError("Incorrect current password.")
+
+                if new_pass2 != new_pass:  # changing password
+                    raise ValueError("New passwords do not match!")
+
+                self.settings['password'] = new_pass
+
+        else:  # no current password
+            if new_user:  # setting username and password
+                if new_pass and new_pass != new_pass2:
+                    raise ValueError("New passwords do not match!")
+                if not new_pass:
+                    raise ValueError("Must provide password")
+                self.settings['user'] = new_user
+                self.settings['password'] = new_pass
+            else:
+                raise ValueError("Must provide username")
 
 
 def authorized(orig):

@@ -1,4 +1,3 @@
-import hashlib
 import ipaddress
 import logging
 from datetime import timedelta
@@ -40,7 +39,7 @@ from api.views.mixins import (
     ShutdownViewMixin,
 )
 from lib import device_helper, diagnostics
-from lib.auth import authorized, update_basic_auth_credentials
+from lib.auth import authorized, hash_password
 from lib.github import is_up_to_date
 from lib.utils import (
     connect_to_redis,
@@ -207,9 +206,33 @@ class DeviceSettingsViewV2(APIView):
         try:
             # Force reload of settings
             settings.load()
-        except Exception as e:
-            logging.error(f'Failed to reload settings: {str(e)}')
-            # Continue with existing settings if reload fails
+        except FileNotFoundError as error:
+            logging.error("Settings file missing during reload: %s", error)
+            return Response(
+                {
+                    'error': 'settings_not_found',
+                    'message': 'Settings file missing during reload',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except PermissionError as error:
+            logging.error("Permission denied reloading settings: %s", error)
+            return Response(
+                {
+                    'error': 'settings_permission_denied',
+                    'message': 'Permission denied reloading settings',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except Exception:
+            logging.exception('Unexpected error reloading settings')
+            return Response(
+                {
+                    'error': 'settings_reload_failed',
+                    'message': 'Failed to reload device settings',
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         return Response({
             'player_name': settings['player_name'],
@@ -238,13 +261,46 @@ class DeviceSettingsViewV2(APIView):
         if auth_backend != 'auth_basic':
             return
 
-        update_basic_auth_credentials(
-            settings,
-            data.get('username', ''),
-            data.get('password', ''),
-            data.get('password_2', ''),
-            current_pass_correct,
-        )
+        new_user = data.get('username', '')
+        new_pass = data.get('password', '')
+        new_pass2 = data.get('password_2', '')
+        new_pass = hash_password(new_pass) if new_pass else None
+        new_pass2 = hash_password(new_pass2) if new_pass2 else None
+
+        if settings['password']:
+            if new_user != settings['user']:
+                if current_pass_correct is None:
+                    raise ValueError(
+                        "Must supply current password to change username"
+                    )
+                if not current_pass_correct:
+                    raise ValueError("Incorrect current password.")
+
+                settings['user'] = new_user
+
+            if new_pass:
+                if current_pass_correct is None:
+                    raise ValueError(
+                        "Must supply current password to change password"
+                    )
+                if not current_pass_correct:
+                    raise ValueError("Incorrect current password.")
+
+                if new_pass2 != new_pass:
+                    raise ValueError("New passwords do not match!")
+
+                settings['password'] = new_pass
+
+        else:
+            if new_user:
+                if new_pass and new_pass != new_pass2:
+                    raise ValueError("New passwords do not match!")
+                if not new_pass:
+                    raise ValueError("Must provide password")
+                settings['user'] = new_user
+                settings['password'] = new_pass
+            else:
+                raise ValueError("Must provide username")
 
     @extend_schema(
         summary='Update device settings',
