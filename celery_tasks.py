@@ -18,6 +18,7 @@ try:
         reboot_via_balena_supervisor,
         shutdown_via_balena_supervisor,
     )
+    from panelsh_app.helpers import add_default_assets, remove_default_assets
 except Exception:
     pass
 
@@ -91,3 +92,15 @@ def shutdown_panelsh():
                 shutdown_via_balena_supervisor()
     else:
         r.publish('hostcmd', 'shutdown')
+
+
+@celery.task
+def add_default_assets_task():
+    """Background task to add default assets."""
+    add_default_assets()
+
+
+@celery.task
+def remove_default_assets_task():
+    """Background task to remove default assets."""
+    remove_default_assets()
